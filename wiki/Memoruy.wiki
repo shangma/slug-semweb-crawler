@@ -1,3 +1,0 @@
-#summary One-sentence summary of this page.
-
-Slug implements the [http://rdfweb.org/topic/ScutterVocab ScutterVocab] as a means of recording its travels across the Web. 
