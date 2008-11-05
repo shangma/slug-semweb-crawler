@@ -1,0 +1,31 @@
+#summary a rough roadmap for releases
+
+This page contains some notes on the expected functionality that will be included in future iterations of Slug. Bear in mind that development is a part-time activity, with a priority set by what problems/features I either find interesting or necessary for my own projects.
+
+Nagging is a good way to get features implemented. If I know someone is using the code, that's good motivation.
+
+=alpha-3 "The Behaviour Release"=
+
+Slug isn't very well behaved. It needs to:
+
+  * Support the Robot Exclusion Protocol
+  * Allow configuration of the User-Agent header
+  * Implement throttling on a global and per-domain basis
+  * Check additional HTTP status codes to "skip" more errors
+  * Support white-listing of URLs
+  * Expose and capture more statistics while in-progress
+
+The following additional features will be useful:
+
+  * Support Content Negotiation to allow for additional RDF syntaxes
+  * Follow more than just rdfs:seeAlso links to find data, by allowing pluggable link discovery
+  * Integrate a smushing utility for managing persistent data
+  * Alter the Consumer components to be structured as a pipeline, enabling pre-processing of incoming content, e.g. to use GRDDL to extract data.
+
+=alpha-4 "For Control Freaks"=
+
+Slug needs to be easier to control. The Monitor component should be made pluggable to allow for a GUI or Web Application to be used to control the Scutter.
+
+=beta-1 "Testing, Testing"=
+
+Concentrate on additional unit and functional testing. Aim to have stabilised APIs, particular around the component model to aim for a stable 1.0 release. 
