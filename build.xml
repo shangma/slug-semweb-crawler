@@ -72,7 +72,7 @@
     
    </target>
 
-   <target name="build.tests" description="Compile the tests">
+   <target name="build.tests" depends="build" description="Compile the tests">
       <javac srcdir="${test.dir}"
              destdir="${bin.dir}"
              debug="${debug}"
