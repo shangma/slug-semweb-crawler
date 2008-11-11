@@ -51,7 +51,7 @@ Filters:
 === shallow-slow-scutter ===
 A Scutter which crawls only a shallow depth, with fewer workers
    
-Memory: a file-based memory named memory.rdf
+ Memory: a file-based memory named memory.rdf
 Workers: 3 threads
 
 Consumers:
@@ -74,8 +74,8 @@ Consumers:
   * rdf-consumer - looks for rdfs:seeAlso links in scuttered content and adds them to the scutter task list.
 
 Filters:
-* single-fetch-filter - avoids loops by remembering which resources have been fetched
-* deep-depth-filter - limits crawl depth to 5 link deep
+  * single-fetch-filter - avoids loops by remembering which resources have been fetched
+  * deep-depth-filter - limits crawl depth to 5 link deep
 
 === persistent-scutter ===
 A Scutter that includes writing incoming data into a persistent memory. Note that the memory is different to that holdings Scutter persistent state.
@@ -102,4 +102,3 @@ Workers: 10 threads
 
 Consumers:
   * storer - stores HTTP responses in c:\temp\slug-cache
-
