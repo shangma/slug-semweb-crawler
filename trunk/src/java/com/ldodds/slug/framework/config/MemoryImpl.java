@@ -2,6 +2,9 @@ package com.ldodds.slug.framework.config;
 
 import java.net.URL;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.io.StringReader;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -25,6 +28,11 @@ public abstract class MemoryImpl implements Memory
 {
 
   protected Model _model;
+  protected Logger _logger;
+  
+  public MemoryImpl() {
+    _logger = Logger.getLogger(getClass().getPackage().getName());
+  }
   
   public Model getModel() 
   {
@@ -229,5 +237,18 @@ public abstract class MemoryImpl implements Memory
   public ResIterator getAllRepresentations() {
     return _model.listSubjectsWithProperty(RDF.type, SCUTTERVOCAB.Representation);      
   }
+
+  public void store(Resource resource, StringBuffer content, URL requestURL) throws Exception {
+    _model.begin();
+    try {
+      _model.read( new StringReader(content.toString()), "");
+      _model.commit();
+      _logger.log(Level.FINEST, "Written " + requestURL + " to model, size= " + _model.size());      
+    } catch (Exception e)
+    {
+      _logger.log(Level.SEVERE, "Unable to store response from " + requestURL, e);
+      _model.abort();
+    }
+  } 
 
 }
