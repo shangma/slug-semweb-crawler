@@ -34,4 +34,7 @@ public interface Memory
   Resource makeReasonAndSkip(Resource representation, String msg);
   Resource makeReasonAndError(Resource fetch, String msg);
   Resource makeReasonAndError(Resource fetch, Exception e);
+
+  void store(Resource resource, StringBuffer content, URL requestURL) throws Exception;
+
 }
