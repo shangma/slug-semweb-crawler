@@ -115,8 +115,9 @@
      </classpath>
    
      <formatter type="plain"/>
+      <formatter type="brief" usefile="false"/>
       
-     <batchtest todir="${reports.dir}">
+     <batchtest haltonfailure="no" todir="${reports.dir}">
        <fileset dir="${test.dir}">
          <include name="**/*Test*.java"/>
          <exclude name="**/AllTests.java"/>
