@@ -14,4 +14,4 @@ set CLASSPATH=%CLASSPATH%;lib/xercesImpl.jar
 set CLASSPATH=%CLASSPATH%;lib/xml-apis.jar
 set CLASSPATH=%CLASSPATH%;lib/mysql-connector-java-3.1.8-bin.jar
 
-java -classpath %CLASSPATH% -Djava.util.logging.config.file=logging.properties com.ldodds.slug.Scutter %1 %2 %3 %4 %5 %6 %7 %8 %9
+java -classpath %CLASSPATH% -Djava.util.logging.config.file=etc\logging.properties com.ldodds.slug.Scutter %1 %2 %3 %4 %5 %6 %7 %8 %9

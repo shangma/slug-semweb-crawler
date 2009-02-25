@@ -6,4 +6,4 @@ do
 done
 
 
-java -classpath ${CLASSPATH} -Djava.util.logging.config.file=logging.properties com.ldodds.slug.Scutter $*
+java -classpath ${CLASSPATH} -Djava.util.logging.config.file=etc/logging.properties com.ldodds.slug.Scutter $*
