@@ -1,9 +1,16 @@
 package com.ldodds.slug.framework.config;
 
+import java.util.logging.Level;
+
 import com.hp.hpl.jena.db.*;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.shared.DoesNotExistException;
 
+/**
+ * Implementation of the Memory interface that stores data in a database
+ * 
+ * @author ldodds
+ */
 class DatabaseMemory extends MemoryImpl 
 {
   private String _user;
@@ -42,13 +49,14 @@ class DatabaseMemory extends MemoryImpl
     {
       _model = ModelRDB.createModel(dbConnection, _modelURI);
     }
-    
+	_logger.log(Level.INFO, "Memory Loaded");    
     return _model;
   }
 
   public void save() throws Exception 
   {
     _model.close();
+	_logger.log(Level.INFO, "Memory Saved");    
   }
 
 }
