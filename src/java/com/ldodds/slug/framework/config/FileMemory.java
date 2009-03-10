@@ -1,12 +1,19 @@
 package com.ldodds.slug.framework.config;
 
 import java.io.*;
+import java.util.logging.Level;
 
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.DC;
 import com.hp.hpl.jena.vocabulary.RDFSyntax;
 import com.ldodds.slug.vocabulary.SCUTTERVOCAB;
 
+/**
+ * Implementation of the Memory interface that stores data in a file as RDF/XML.
+ * 
+ * @author ldodds
+ *
+ */
 class FileMemory extends MemoryImpl 
 {
 	private String _fileName;
@@ -27,7 +34,8 @@ class FileMemory extends MemoryImpl
 		if (! (file.length() == 0L))
 		{
 			_model.read( new FileInputStream(_fileName), "" );	
-		}		
+		}
+		_logger.log(Level.INFO, "Memory Loaded");
 		return _model;
 	}
 
@@ -46,6 +54,7 @@ class FileMemory extends MemoryImpl
         writer.write(_model, new FileOutputStream(_fileName), "");                        
         
 		_model.close();
+		_logger.log(Level.INFO, "Memory Saved");		
 	}
 
 }
