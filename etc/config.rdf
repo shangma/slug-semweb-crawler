@@ -25,6 +25,8 @@ with different worker, memory, consumer and filter configurations.
 	 <!-- how many worker threads -->
      <slug:workers>10</slug:workers>
 
+     <slug:userAgent>Slug Semantic Web Crawler (http://www.ldodds.com/projects/slug)</slug:userAgent>
+
      <!-- configures consumers for incoming data -->
 	 <slug:consumers>
 	   <rdf:Seq>
@@ -148,15 +150,15 @@ with different worker, memory, consumer and filter configurations.
      <dc:title>ResponseStorer</dc:title>
      <dc:description>Stores HTTP responses in a file system cache</dc:description>
    
-     <slug:impl>com.ldodds.slug.http.ResponseStorer</slug:impl>
+     <slug:impl>com.ldodds.slug.http.storage.ResponseStorer</slug:impl>
      <!-- must be a directory, will get created automatically if it doesn't exist -->
-     <slug:cache>c:\temp\slug-cache</slug:cache>
+     <slug:cache>/home/ldodds/data/bbc/rdf</slug:cache>
    </slug:Consumer>
 
    <slug:Consumer rdf:about="persistent-storer">
      <dc:title>Database-backed ResponseStorer</dc:title>
      <dc:description>Stores HTTP responses in Jena persistent model</dc:description>
-     <slug:impl>com.ldodds.slug.http.PersistentResponseStorer</slug:impl>
+     <slug:impl>com.ldodds.slug.http.storage.PersistentResponseStorer</slug:impl>
      <!-- must be reference to a Memory -->
      <slug:hasMemory rdf:resource="db-memory"/>
    </slug:Consumer>
@@ -169,39 +171,46 @@ with different worker, memory, consumer and filter configurations.
 
    <slug:Filter rdf:about="depth-filter">
      <dc:title>Limit Depth of Crawling</dc:title>
-	 <slug:impl>com.ldodds.slug.http.DepthFilter</slug:impl>
+	 <slug:impl>com.ldodds.slug.http.filter.DepthFilter</slug:impl>
 	 <!-- if depth >= this then url not included. Initial depth is 0 -->
 	 <slug:depth>3</slug:depth>
    </slug:Filter>
 
    <slug:Filter rdf:about="deep-depth-filter">
      <dc:title>Limit Depth of Crawling</dc:title>
-	 <slug:impl>com.ldodds.slug.http.DepthFilter</slug:impl>
+	 <slug:impl>com.ldodds.slug.http.filter.DepthFilter</slug:impl>
 	 <!-- if depth >= this then url not included. Initial depth is 0 -->
 	 <slug:depth>5</slug:depth>
    </slug:Filter>
    
+   <slug:Filter rdf:about="medium-depth-filter">
+     <dc:title>Limit Depth of Crawling</dc:title>
+	 <slug:impl>com.ldodds.slug.http.filter.DepthFilter</slug:impl>
+	 <!-- if depth >= this then url not included. Initial depth is 0 -->
+	 <slug:depth>3</slug:depth>
+   </slug:Filter>
+
    <slug:Filter rdf:about="shallow-depth-filter">
      <dc:title>Limit Depth of Crawling</dc:title>
-	 <slug:impl>com.ldodds.slug.http.DepthFilter</slug:impl>
+	 <slug:impl>com.ldodds.slug.http.filter.DepthFilter</slug:impl>
 	 <!-- if depth >= this then url not included. Initial depth is 0 -->
 	 <slug:depth>1</slug:depth>
    </slug:Filter>
    
    <slug:Filter rdf:about="regex-filter">
      <dc:title>Block URLs based on Regex</dc:title>
-	 <slug:impl>com.ldodds.slug.http.RegexFilter</slug:impl>
+	 <slug:impl>com.ldodds.slug.http.filter.RegexFilter</slug:impl>
 	 <!-- regular expression, if matches, then url not included -->
 	 <slug:filter>livejournal</slug:filter>
    </slug:Filter>
 
    <slug:Filter rdf:about="single-fetch-filter">
      <dc:title>Avoid Loops</dc:title>
-	 <slug:impl>com.ldodds.slug.http.SingleFetchFilter</slug:impl>
+	 <slug:impl>com.ldodds.slug.http.filter.SingleFetchFilter</slug:impl>
    </slug:Filter>         
    
    <slug:Memory rdf:about="memory">
-     <slug:file>memory.rdf</slug:file>
+     <slug:file>/home/ldodds/data/bbc/slug/memory.rdf</slug:file>
    </slug:Memory>
 
    <slug:Memory rdf:about="db-memory">
