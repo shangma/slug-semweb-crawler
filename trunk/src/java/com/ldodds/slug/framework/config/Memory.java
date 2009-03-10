@@ -2,6 +2,7 @@ package com.ldodds.slug.framework.config;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -30,7 +31,7 @@ public interface Memory
   boolean canBeFetched(Resource representation, Date date);
   void addRawTripleCount(Resource representation, long size);
   Resource makeFetch(Resource representation);
-  void annotateFetch(Resource fetch, int code, Map headers);
+  void annotateFetch(Resource fetch, int code, Map<String, List<String>> headers);
   Resource makeReasonAndSkip(Resource representation, String msg);
   Resource makeReasonAndError(Resource fetch, String msg);
   Resource makeReasonAndError(Resource fetch, Exception e);
