@@ -7,6 +7,7 @@ import java.io.*;
 import java.net.*;
 
 import com.ldodds.slug.framework.*;
+import com.ldodds.slug.framework.config.Component;
 import com.ldodds.slug.framework.config.ComponentFactory;
 import com.ldodds.slug.framework.config.Memory;
 import com.ldodds.slug.framework.config.MemoryFactory;
@@ -14,7 +15,8 @@ import com.ldodds.slug.http.*;
 import com.ldodds.slug.vocabulary.CONFIG;
 import com.ldodds.slug.vocabulary.SCUTTERVOCAB;
 import com.hp.hpl.jena.rdf.model.*;
-import com.hp.hpl.jena.vocabulary.*;
+import com.hp.hpl.jena.util.FileManager;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 /**
  * @author ldodds
@@ -22,9 +24,9 @@ import com.hp.hpl.jena.vocabulary.*;
  */
 public class Scutter implements Runnable
 {
-  private static final String USER_AGENT = "Slug Semantic Web Crawler alpha-2 (http://www.ldodds.com/projects/slug)";
+  private static final String DEFAULT_USER_AGENT = "Slug Semantic Web Crawler (http://www.ldodds.com/projects/slug)";
   
-  private List _urls;
+  private List<URLTask> _urls;
   private Memory _memory;
   private FilteringController _controller;
   private int _workers;
@@ -32,14 +34,43 @@ public class Scutter implements Runnable
   private String _scutterId;
   private boolean _freshen;
   
+  private static Logger logger = Logger.getLogger(Scutter.class.getPackage().getName());
+  
   public Scutter() throws Exception
   {
-    _urls = new ArrayList();
+    _urls = new ArrayList<URLTask>();
     _workers = 5;
-    _scutterId = "slug";
+    _scutterId = "default";
     _freshen = false;
   }
   
+	/**
+	 * Retrieve all rdfs:seeAlso links from a Model, and add each link to 
+	 * the provided set as a URLTask.
+	 * 
+	 * @param model the model to scan
+	 * @param set the Set to which URLs will be added
+	 * @return the provided set
+	 */
+	public Set<URLTask> getSeeAlsoAsTasks(Model model, Set<URLTask> set)
+	{
+		NodeIterator iter = model.listObjectsOfProperty(RDFS.seeAlso);
+		while (iter.hasNext())
+		{
+			RDFNode node = iter.nextNode();
+			String seeAlso = node.toString(); 
+			try
+			{
+				set.add( new URLTaskImpl( new URL(seeAlso) ) );
+			} catch (MalformedURLException e)
+			{
+				logger.log(Level.WARNING, "Unable to build URL", e);				
+			}
+					
+		}
+		return set;				
+	}  
+	
   /**
      * @param scutterplan
      * @param urls
@@ -47,18 +78,14 @@ public class Scutter implements Runnable
      * @throws MalformedURLException
      */
   private void addScutterPlan(String scutterplan) throws FileNotFoundException, MalformedURLException {
-    Set urls = new HashSet();
+    Set<URLTask> urls = new HashSet<URLTask>();
         
     Model plan = ModelFactory.createDefaultModel();
-    if (scutterplan != null && scutterplan.startsWith("http://")) {
-      plan.read(scutterplan, scutterplan);
-    }
-    else if (scutterplan != null) {
-      plan.read(new FileInputStream(scutterplan), "");    
-    }
+    //FIXME other formats
+    FileManager.get().readModel(plan, scutterplan, "TURTLE");
     
     //get all seeAlso links from scutter plan, and add to work plan
-    ModelUtils.getSeeAlsoAsTasks(plan, urls);
+    getSeeAlsoAsTasks(plan, urls);
     
     _urls.addAll(urls);
   }
@@ -68,6 +95,7 @@ public class Scutter implements Runnable
       Model config = readConfig();
       Resource me = getSelf(config);
       
+      //create and load memory of previous crawls
       _memory = new MemoryFactory().getMemoryFor(me);
       _memory.load();
       
@@ -75,33 +103,36 @@ public class Scutter implements Runnable
       URLRetrievalWorkerFactory factory = new URLRetrievalWorkerFactory();
           
       //configure the shared memory
-      factory.setMemory( _memory );
+      factory.setMemory( _memory );      
       
+      //what to do with fetched data      
       ComponentFactory componentFactory = new ComponentFactory();
-      List consumers = componentFactory.instantiateComponentsFor(me, CONFIG.consumers);
-      
-      //what to do with the results   
+      List<Component> consumers = componentFactory.instantiateComponentsFor(me, CONFIG.consumers);         
       DelegatingConsumerImpl consumer = new DelegatingConsumerImpl(consumers);      
-      consumer.setMemory(_memory);
+      
+      //wire everything up
+      consumer.setMemory(_memory);      
       factory.setConsumer( consumer );
-
-      //how to filter tasks
-      List filters = componentFactory.instantiateComponentsFor(me, CONFIG.filters);
-      DelegatingTaskFilterImpl filter = new DelegatingTaskFilterImpl(filters);
 
       //how to monitor progress, TODO make this configurable
       Monitor monitor = new MonitorImpl();
       factory.setMonitor( monitor );
-          
-      //how many workers?
-      _workers = me.getProperty(CONFIG.workers).getInt();
+                
+      //be polite and set JVM user agent
+      setUserAgent(me);
       
       if (_freshen) {
         _urls.addAll( readURLsFromMemory() );       
       }
       
-      _controller = new FilteringController(_urls, factory , _workers, monitor);
+      //how many workers?
+      _workers = me.getProperty(CONFIG.workers).getInt();
       
+      _controller = new FilteringController(_urls, factory , _workers, monitor);
+
+      //how to filter tasks
+      List<Component> filters = componentFactory.instantiateComponentsFor(me, CONFIG.filters);
+      DelegatingTaskFilterImpl filter = new DelegatingTaskFilterImpl(filters);      
       _controller.addFilter( filter );
           
       _controller.run();
@@ -112,9 +143,17 @@ public class Scutter implements Runnable
     }
   }
   
-  private List readURLsFromMemory() throws MalformedURLException
+  private void setUserAgent(Resource me) {
+	  String userAgent = DEFAULT_USER_AGENT;
+	  if ( me.hasProperty(CONFIG.userAgent) ) {
+		  userAgent = me.getProperty(CONFIG.userAgent).getObject().toString();
+	  }
+      System.setProperty("http.agent", userAgent);	
+  }
+
+private List<URLTask> readURLsFromMemory() throws MalformedURLException
   {
-    List urls = new ArrayList();
+    List<URLTask> urls = new ArrayList<URLTask>();
     //loop through existing memory and add all previously found urls to work plan
     ResIterator reps = _memory.getAllRepresentations();
     while (reps.hasNext())
@@ -185,10 +224,7 @@ public class Scutter implements Runnable
    * -plan : initial scutter plan
    */
     public static void main(String[] args) throws Exception
-    {
-      //FIXME read this from the scutter profile instead
-      System.setProperty("http.agent", USER_AGENT);
-      
+    {      
       final Scutter scutter = new Scutter();
       
       System.out.println("Configuring...");     
@@ -229,35 +265,39 @@ public class Scutter implements Runnable
           printHelp();  
           return;
         }
-      
-        for (int i=0; i<args.length; i++)
-        {
-            String arg = args[i];
-            if (arg.equals("-config"))
-            {
-                System.out.println("Found Config");
-                scutter.setConfig( args[++i] );
-            }
-            else if ( arg.equals("-id") )
-            {
-                System.out.println("Found Id");
-                scutter.setId( args[++i] );             
-            }
-            else if (arg.equals("-plan"))
-            {
-                System.out.println("Found plan");
-                scutter.addScutterPlan(args[++i]);
-            }
-            else if (arg.equals("-freshen"))
-            {
-                System.out.println("Found freshen");
-              scutter.setFreshen(true);
-              ++i;
-            }
-            else
-            {
-                System.out.println("Unknown argument '" + arg + "' ignored");
-            }
+
+        try {
+	        for (int i=0; i<args.length; i++)
+	        {
+	            String arg = args[i];
+	            if (arg.equals("-config"))
+	            {
+	                System.out.println("Found Config");
+	                scutter.setConfig( args[++i] );
+	            }
+	            else if ( arg.equals("-id") )
+	            {
+	                System.out.println("Found Id");
+	                scutter.setId( args[++i] );             
+	            }
+	            else if (arg.equals("-plan"))
+	            {
+	                System.out.println("Found plan");
+	                scutter.addScutterPlan(args[++i]);
+	            }
+	            else if (arg.equals("-freshen"))
+	            {
+	                System.out.println("Found freshen");
+	              scutter.setFreshen(true);
+	              ++i;
+	            }
+	            else
+	            {
+	                System.out.println("Unknown argument '" + arg + "' ignored");
+	            }
+	        }
+        } catch (Exception e) {
+        	logger.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
