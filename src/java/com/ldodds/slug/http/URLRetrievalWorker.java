@@ -125,19 +125,18 @@ public class URLRetrievalWorker extends ProducerWorkerImpl
                         
           Resource latestFetch = rep.getProperty(SCUTTERVOCAB.latestFetch).getResource();
           if (latestFetch.hasProperty(SCUTTERVOCAB.etag))
-          {
-            //System.out.println(latestFetch.getProperty(SCUTTERVOCAB.etag).getObject().toString());                
+          {                
             connection.addRequestProperty("If-None-Match", 
               latestFetch.getProperty(SCUTTERVOCAB.etag).getObject().toString() );
           }
           if (latestFetch.hasProperty(SCUTTERVOCAB.lastModified))
           {
-            //System.out.println(latestFetch.getProperty(SCUTTERVOCAB.lastModified).getObject().toString());
             connection.addRequestProperty("If-Modified-Since",
             latestFetch.getProperty(SCUTTERVOCAB.lastModified).getObject().toString() );
           }
 
         }
+        connection.addRequestProperty("Accept", "application/rdf+xml");
     }
     
 }
