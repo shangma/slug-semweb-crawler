@@ -1,0 +1,39 @@
+package com.ldodds.slug.http.filter;
+
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.ldodds.slug.http.RDFConsumer;
+import com.ldodds.slug.http.URLTask;
+
+/**
+ * Trivial {@link URLTaskFilter} that simply ensures that 
+ * URLs are only visited once within a particular crawl.
+ * 
+ * Note that this is slightly redundant as {@link RDFConsumer} 
+ * already checks to see whether a URL has been fetched since 
+ * the crawl started.
+ * 
+ * @author ldodds
+ */
+public class SingleFetchFilter extends URLTaskFilter
+{
+    private Set<URL> _visited;
+    
+    public SingleFetchFilter()
+    {
+        _visited = new HashSet<URL>(20);        
+    }
+    
+    protected boolean acceptURL(URLTask task)
+    {
+        URL url = task.getURL();
+        if (_visited.contains(url))
+        {
+            return false;
+        }
+        _visited.add(url);
+        return true;
+    }
+}
