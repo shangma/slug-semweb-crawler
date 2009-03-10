@@ -2,7 +2,8 @@ package com.ldodds.slug.framework;
 
 /**
  * Observes the progress of a web crawl, noting when 
- * tasks start and finish.
+ * tasks start and finish. Can be used to generate metrics 
+ * during the crawl
  * 
  * @author ldodds
  */
@@ -12,8 +13,8 @@ public interface Monitor
     public void completedTask(Worker worker, Task workItem);
     
     public int getNumberOfActiveWorkers();
-        
+    
+    public void setController(Controller controller);
     //TODO need metrics
-    //TODO need to know how many workers there are
     
 }

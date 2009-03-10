@@ -9,13 +9,14 @@ import java.util.logging.*;
  */
 public class MonitorImpl implements Monitor
 {
-    private Map _activeWorkers;
+    private Map<Worker, Task> _activeWorkers;
     private Logger _logger; 
     private int _completedTasks;
+    private Controller controller;
     
     public MonitorImpl()
     {
-        _activeWorkers = new HashMap();
+        _activeWorkers = new HashMap<Worker, Task>();
         _logger = Logger.getLogger(getClass().getPackage().getName());
         _completedTasks = 0;
     }
@@ -25,12 +26,14 @@ public class MonitorImpl implements Monitor
 	 */
 	public synchronized void completedTask(Worker worker, Task workItem)
 	{
-		_logger.finest(worker.getName() + " completed task");
+		_logger.finest(worker.getName() + " completed task " + workItem.getName() );
 		_activeWorkers.remove(worker);
 		_completedTasks++;
+		
 		if (_completedTasks % 1000 == 0)
 		{
-			_logger.info(_completedTasks + " completed so far");
+            _logger.log(Level.INFO, _completedTasks + " completed; " + getNumberOfActiveWorkers() + 
+                    " of " + controller.getNumberOfWorkers() + " active workers; " + controller.getQueueSize() + " items queued");			
 		}
 	}
 
@@ -41,19 +44,17 @@ public class MonitorImpl implements Monitor
 	{
 		return _activeWorkers.keySet().size();
 	}
-
-	public synchronized Map getActiveWorkers()
-	{
-		return Collections.unmodifiableMap(_activeWorkers);
-	}
 	
 	/**
 	 * @see com.ldodds.slug.framework.Monitor#startingTask(com.ldodds.slug.framework.Worker, java.lang.Object)
 	 */
 	public synchronized void startingTask(Worker worker, Task workItem)
 	{
-		_logger.finest(worker.getName() + " starting task");
+		_logger.fine(worker.getName() + " starting task " + workItem.getName());
 		_activeWorkers.put(worker, workItem);
 	}
 
+	public void setController(Controller controller) {
+		this.controller = controller;
+	}
 }
