@@ -10,7 +10,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Seq;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.ldodds.slug.http.RDFConsumer;
-import com.ldodds.slug.http.ResponseStorer;
+import com.ldodds.slug.http.storage.ResponseStorer;
 import com.ldodds.slug.vocabulary.CONFIG;
 
 import junit.framework.TestCase;
