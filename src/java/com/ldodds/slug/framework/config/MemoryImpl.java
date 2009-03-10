@@ -15,7 +15,6 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.shared.Lock;
 import com.hp.hpl.jena.vocabulary.DC;
 import com.hp.hpl.jena.vocabulary.RDF;
-import com.ldodds.slug.http.DateUtils;
 import com.ldodds.slug.vocabulary.SCUTTERVOCAB;
 
 /**
@@ -121,7 +120,8 @@ public abstract class MemoryImpl implements Memory
             if (representation.hasProperty(SCUTTERVOCAB.latestFetch))
             {
                 Resource fetch = (Resource)representation.getProperty(SCUTTERVOCAB.latestFetch).getObject();
-                fetch.addProperty(SCUTTERVOCAB.rawTripleCount, size );
+                //FIXME
+                fetch.addProperty(SCUTTERVOCAB.rawTripleCount, size + "" );
             }
         } finally
         {
@@ -167,26 +167,26 @@ public abstract class MemoryImpl implements Memory
     return fetch;
   }
 
-  public void annotateFetch(Resource fetch, int code, Map headers) 
+  public void annotateFetch(Resource fetch, int code, Map<String,List<String>> headers) 
     {
         _model.enterCriticalSection(Lock.WRITE);
         try
         {
-        fetch.addProperty(SCUTTERVOCAB.status, code);
+        fetch.addProperty(SCUTTERVOCAB.status, code + "");
         if (headers.containsKey("Content-Type"))
         {
-          List values = (List)headers.get("Content-Type");
+          List<String> values = (List<String>)headers.get("Content-Type");
           fetch.addProperty(SCUTTERVOCAB.contentType, values.get(0) );      
         }
         if (headers.containsKey("Last-Modified"))
         {
-          List values = (List)headers.get("Last-Modified");
+        	List<String> values = (List<String>)headers.get("Last-Modified");
           fetch.addProperty(SCUTTERVOCAB.lastModified, values.get(0) );
         }
         if (headers.containsKey("ETag"))
         {
-          List values = (List)headers.get("ETag");
-          fetch.addProperty(SCUTTERVOCAB.etag, values.get(0));      
+        	List<String> values = (List<String>)headers.get("ETag");
+          fetch.addProperty(SCUTTERVOCAB.etag, values.get(0) );      
         }
         } finally
         {
