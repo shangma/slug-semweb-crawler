@@ -39,10 +39,17 @@ public class CONFIG {
     public static final Property modelURI = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/modelURI" );
     
     public static final Property filters = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/filters" );
+
+    public static final Property scanner = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/scanner" );
     
     public static final Property pass = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/pass" );
     
     public static final Property dbName = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/dbName" );
+
+    public static final Property replacementRegex = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/replacementRegex" );
+    public static final Property replacementValue = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/replacementValue" );
+    
+    public static final Property userAgent = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/userAgent" );
     
     public static final Resource MemoryHolder = m_model.createResource( "http://purl.org/NET/schemas/slug/config/MemoryHolder" );
     
@@ -55,5 +62,7 @@ public class CONFIG {
     public static final Resource DatabaseMemory = m_model.createResource( "http://purl.org/NET/schemas/slug/config/DatabaseMemory" );
     
     public static final Resource Component = m_model.createResource( "http://purl.org/NET/schemas/slug/config/Component" );
+    
+    public static final Resource Scanner = m_model.createResource( "http://purl.org/NET/schemas/slug/config/Scanner" );
     
 }
