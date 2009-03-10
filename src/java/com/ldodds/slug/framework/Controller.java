@@ -43,7 +43,8 @@ public class Controller implements Runnable
        
         factory.setController(this);
         factory.setMonitor(_monitor);
-                  
+        _monitor.setController(this);
+        
         _workerThreadGroup = new ThreadGroup("Workers");
     }
     
@@ -70,8 +71,6 @@ public class Controller implements Runnable
             try
             {
                 Thread.sleep(1000);
-                _logger.log(Level.FINE, _monitor.getNumberOfActiveWorkers() + 
-                  " active workers, " + _workItems.size() + " items queued");
                 if (_workItems.size() == 0 && _monitor.getNumberOfActiveWorkers() == 0)
                 {
                   break;
@@ -159,5 +158,13 @@ public class Controller implements Runnable
   public Date getStarted()
   {
     return _started;        
+  }
+  
+  public int getQueueSize() {
+	  return _workItems.size();
+  }
+  
+  public int getNumberOfWorkers() {
+	  return _numberOfWorkers;
   }
 }
