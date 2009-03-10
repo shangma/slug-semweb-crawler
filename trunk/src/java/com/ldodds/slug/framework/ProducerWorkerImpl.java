@@ -58,15 +58,12 @@ public abstract class ProducerWorkerImpl extends WorkerImpl implements Producer
 	        //to do, or we should stop
 	        if (_workItem != null)
 	        {
-				//_monitor.startingTask(this, _workItem);
 				Object results = doTask(_workItem);
-				//_logger.finest( getName() + " notifying consumer");
 				if (results != null)
 				{
 					_consumer.consume(_workItem, results);
 				}
 				//TODO note error?
-				//_monitor.completedTask(this, _workItem);
 				_controller.completedTask(this, _workItem);
 	        }
 	        if (_shouldStop)
