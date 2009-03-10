@@ -33,7 +33,7 @@ public class FilteringController extends Controller {
 		}
 		else
 		{
-			_logger.warning("Filtered work item: " + workItem);
+			_logger.finest("Filtered work item: " + workItem);
 		}
 	}
 	
