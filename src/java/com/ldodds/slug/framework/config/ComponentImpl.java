@@ -1,6 +1,8 @@
 package com.ldodds.slug.framework.config;
 
+import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
 
 /**
  * Default implementation of the {@see Component} 
@@ -38,4 +40,14 @@ public class ComponentImpl implements Component
 		return true;
 	}
 
+	protected Component instantiateReferenced(Resource self, Property property) {
+		  Statement s = self.getProperty( property );
+		  Resource scan = (Resource)s.getObject();
+	      ComponentFactory componentFactory = new ComponentFactory();
+	      try {
+	    	  return componentFactory.instantiate(scan);	    	 
+	      } catch (Exception e) {
+	    	  throw new RuntimeException(e);
+	      }		
+	}
 }
