@@ -7,10 +7,10 @@ public class AllTests {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test for com.ldodds.slug.http");
+		suite.addTest(com.ldodds.slug.http.filter.AllTests.suite());		
+		suite.addTest(com.ldodds.slug.http.scanner.AllTests.suite());
 		//$JUnit-BEGIN$
-		suite.addTestSuite(RegexFilterTest.class);
-		suite.addTestSuite(URLTaskImplTest.class);
-		suite.addTestSuite(SingleFetchFilterTest.class);
+
 		//$JUnit-END$
 		return suite;
 	}
