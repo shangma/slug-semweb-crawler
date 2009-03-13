@@ -40,11 +40,11 @@
      <slug:modelURI rdf:resource="http://www.ldodds.com/projects/slug/my-memory"/>
      
      <!-- JDBC URL for database -->     
-     <slug:dbURL>jdbc:mysql://localhost/armyknife</slug:dbURL>
+     <slug:dbURL>jdbc:mysql://localhost/foo</slug:dbURL>
      
      <!-- database username and password -->
-     <slug:user>army</slug:user>
-     <slug:pass>knife</slug:pass>
+     <slug:user>blah</slug:user>
+     <slug:pass>blah</slug:pass>
      
      <!-- Jena Database Engine name -->
      <slug:dbName>MySQL</slug:dbName>
@@ -57,7 +57,7 @@
    <slug:Consumer rdf:nodeID="storer">
      <dc:title>ResponseStorer</dc:title>
      <dc:description>Stores HTTP responses in a file system cache</dc:description>
-     <slug:impl>com.ldodds.slug.http.ResponseStorer</slug:impl>
+     <slug:impl>com.ldodds.slug.http.storage.ResponseStorer</slug:impl>
      <slug:cache>c:\temp\slug</slug:cache>
      <slug:memory rdf:nodeID="memory"/>
    </slug:Consumer>
@@ -65,14 +65,14 @@
    <slug:Consumer rdf:nodeID="rdf-consumer">
      <dc:title>RDFConsumer</dc:title>
      <dc:description>Discovers seeAlso links in RDF models and adds them to task list</dc:description>
-     <slug:impl>com.ldodds.slug.http.RDFConsumer</slug:impl>
+     <slug:impl>com.ldodds.slug.http.rdf.RDFParsingConsumer</slug:impl>
      <slug:memory rdf:nodeID="memory"/>
    </slug:Consumer>
 	
    <slug:Consumer rdf:about="storer2">
      <dc:title>ResponseStorer</dc:title>
      <dc:description>Stores HTTP responses in a file system cache</dc:description>
-     <slug:impl>com.ldodds.slug.http.ResponseStorer</slug:impl>
+     <slug:impl>com.ldodds.slug.http.storage.ResponseStorer</slug:impl>
    </slug:Consumer>	
    
 </rdf:RDF>	
