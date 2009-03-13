@@ -1,5 +1,6 @@
 package com.ldodds.slug.framework.config;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
@@ -10,7 +11,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 
 /**
- * Interace describing operations required in a 
+ * Interface describing operations required in a 
  * Scutter memory.
  * 
  * Provides convenience methods for accessing and 
@@ -35,7 +36,7 @@ public interface Memory
   Resource makeReasonAndSkip(Resource representation, String msg);
   Resource makeReasonAndError(Resource fetch, String msg);
   Resource makeReasonAndError(Resource fetch, Exception e);
-
+  void addLocalCopy(Resource representation, File localCopy);
   void store(Resource resource, StringBuffer content, URL requestURL) throws Exception;
 
 }
