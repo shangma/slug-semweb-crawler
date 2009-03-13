@@ -49,6 +49,19 @@ public class URLTaskImpl implements URLTask {
     
 	public String toString()
 	{
-		return _url.toString() + ", depth=" + _depth;
+		return "[" + this.getName() + "]" + _url.toString() + ", depth=" + _depth;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof URLTask) {
+			URLTask other = (URLTask)obj;
+			return (other.getName().equals( this.getName() ) && 
+					other.getURL().equals( this.getURL() ) && 
+					other.getDepth() == this.getDepth() );
+		}
+		return false;
+	}
+	
+	
 }
