@@ -23,7 +23,7 @@ public abstract class ProducerWorkerImpl extends WorkerImpl implements Producer
 		_consumer = consumer;
 	}
 
-    protected abstract Object doTask(Task workItem);
+    protected abstract Result doTask(Task workItem);
     
 	/**
 	 * @see java.lang.Runnable#run()
@@ -58,10 +58,11 @@ public abstract class ProducerWorkerImpl extends WorkerImpl implements Producer
 	        //to do, or we should stop
 	        if (_workItem != null)
 	        {
-				Object results = doTask(_workItem);
-				if (results != null)
+				Result result = doTask(_workItem);
+				//TODO capture no-ops and failures
+				if (result != null && result.isSuccess() )
 				{
-					_consumer.consume(_workItem, results);
+					_consumer.consume(_workItem, result);
 				}
 				//TODO note error?
 				_controller.completedTask(this, _workItem);

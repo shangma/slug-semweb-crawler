@@ -19,7 +19,7 @@ public class FilteringController extends Controller {
 	 * @param numberOfWorkers
 	 * @param monitor
 	 */
-	public FilteringController(List workItems, WorkerFactory factory,
+	public FilteringController(List<Task> workItems, WorkerFactory factory,
 			int numberOfWorkers, Monitor monitor) {
 		super(workItems, factory, numberOfWorkers, monitor);
 		_filter = new DelegatingTaskFilterImpl();

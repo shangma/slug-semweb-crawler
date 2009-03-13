@@ -14,6 +14,7 @@ import com.ldodds.slug.framework.config.MemoryHolder;
  */
 public interface Consumer extends MemoryHolder, Component
 {
-    public void consume(Task workItem, Object results);
+    public void consume(Task workItem, Result result);
     public void setController(Controller controller);
+
 }
