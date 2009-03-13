@@ -1,7 +1,6 @@
 <?xml version='1.0'?>
 <rdf:RDF  
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-  xmlns:scutter="http://www.hackdiary.com/scutter/" 
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" 
   xmlns:dc="http://purl.org/dc/elements/1.1/"
   xmlns:slug="http://purl.org/NET/schemas/slug/config/">  
@@ -31,7 +30,8 @@ with different worker, memory, consumer and filter configurations.
 	 <slug:consumers>
 	   <rdf:Seq>
 	    <rdf:li rdf:resource="storer"/>
-	    <rdf:li rdf:resource="rdf-consumer"/>	    
+	    <rdf:li rdf:resource="rdf-parser"/>	    
+	    <rdf:li rdf:resource="rdf-follower"/>	    
 	   </rdf:Seq>	   
 	 </slug:consumers>
 	
@@ -58,7 +58,8 @@ with different worker, memory, consumer and filter configurations.
 	 <slug:consumers>
 	   <rdf:Seq>
 	    <rdf:li rdf:resource="storer"/>
-	    <rdf:li rdf:resource="rdf-consumer"/>	    
+	    <rdf:li rdf:resource="rdf-parser"/>
+	    <rdf:li rdf:resource="rdf-follower"/>	    	    
 	   </rdf:Seq>	   
 	 </slug:consumers>
 	
@@ -84,7 +85,8 @@ with different worker, memory, consumer and filter configurations.
 	 <!-- standard consumer components -->
 	 <slug:consumers>
 	   <rdf:Seq>
-	    <rdf:li rdf:resource="rdf-consumer"/>	    
+	    <rdf:li rdf:resource="rdf-parser"/>	    
+	    <rdf:li rdf:resource="rdf-follower"/>	    
 	   </rdf:Seq>	   
 	 </slug:consumers>
 	
@@ -112,7 +114,8 @@ with different worker, memory, consumer and filter configurations.
 	 <slug:consumers>
 	   <rdf:Seq>
 	    <rdf:li rdf:resource="storer"/>
-	    <rdf:li rdf:resource="rdf-consumer"/>	    
+	    <rdf:li rdf:resource="rdf-parser"/>	    
+	    <rdf:li rdf:resource="rdf-follower"/>	    
 	    <rdf:li rdf:resource="persistent-storer"/>	    	    
 	   </rdf:Seq>	   
 	 </slug:consumers>
@@ -130,7 +133,7 @@ with different worker, memory, consumer and filter configurations.
    
    <slug:Scutter rdf:about="cache-builder">
 	 <dc:description>Builds a local cache of fetched data, doesn't 
-	 traverse RDF links to discover new resources.</dc:description>
+	 perform any parsing or link traversal</dc:description>
 	 
      <slug:hasMemory rdf:resource="memory"/>
 
@@ -163,10 +166,17 @@ with different worker, memory, consumer and filter configurations.
      <slug:hasMemory rdf:resource="db-memory"/>
    </slug:Consumer>
 
-   <slug:Consumer rdf:about="rdf-consumer">
+   <slug:Consumer rdf:about="rdf-parser">
+     <dc:title>RDFParser</dc:title>
+     <dc:description>Parses results as RDF</dc:description>
+     <slug:impl>com.ldodds.slug.http.rdf.RDFParsingConsumer</slug:impl>
+   </slug:Consumer>
+
+   <slug:Consumer rdf:about="rdf-follower">
      <dc:title>RDFConsumer</dc:title>
-     <dc:description>Discovers seeAlso links in RDF models and adds them to task list</dc:description>
-     <slug:impl>com.ldodds.slug.http.RDFConsumer</slug:impl>
+     <dc:description>Discovers seeAlso links in RDF models and adds them to task list. Must be proceeded 
+by a consumer that generates RDF</dc:description>
+     <slug:impl>com.ldodds.slug.http.rdf.ModelDependentConsumerConsumer</slug:impl>
    </slug:Consumer>
 
    <slug:Filter rdf:about="depth-filter">
