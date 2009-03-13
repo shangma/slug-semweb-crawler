@@ -26,22 +26,22 @@ public class Scutter implements Runnable
 {
   private static final String DEFAULT_USER_AGENT = "Slug Semantic Web Crawler (http://www.ldodds.com/projects/slug)";
   
-  private List<URLTask> _urls;
-  private Memory _memory;
-  private FilteringController _controller;
-  private int _workers;
-  private String _configFile;
-  private String _scutterId;
-  private boolean _freshen;
+  private List<Task> _urls;
+  private Memory memory;
+  private FilteringController controller;
+  private int numberOfWorkers;
+  private String configFile;
+  private String scutterId;
+  private boolean freshen;
   
   private static Logger logger = Logger.getLogger(Scutter.class.getPackage().getName());
   
   public Scutter() throws Exception
   {
-    _urls = new ArrayList<URLTask>();
-    _workers = 5;
-    _scutterId = "default";
-    _freshen = false;
+    _urls = new ArrayList<Task>();
+    numberOfWorkers = 5;
+    scutterId = "default";
+    freshen = false;
   }
   
 	/**
@@ -96,14 +96,14 @@ public class Scutter implements Runnable
       Resource me = getSelf(config);
       
       //create and load memory of previous crawls
-      _memory = new MemoryFactory().getMemoryFor(me);
-      _memory.load();
+      memory = new MemoryFactory().getMemoryFor(me);
+      memory.load();
       
       //create the worker factory, TODO make this configurable 
       URLRetrievalWorkerFactory factory = new URLRetrievalWorkerFactory();
           
       //configure the shared memory
-      factory.setMemory( _memory );      
+      factory.setMemory( memory );      
       
       //what to do with fetched data      
       ComponentFactory componentFactory = new ComponentFactory();
@@ -111,7 +111,7 @@ public class Scutter implements Runnable
       DelegatingConsumerImpl consumer = new DelegatingConsumerImpl(consumers);      
       
       //wire everything up
-      consumer.setMemory(_memory);      
+      consumer.setMemory(memory);      
       factory.setConsumer( consumer );
 
       //how to monitor progress, TODO make this configurable
@@ -121,21 +121,21 @@ public class Scutter implements Runnable
       //be polite and set JVM user agent
       setUserAgent(me);
       
-      if (_freshen) {
+      if (freshen) {
         _urls.addAll( readURLsFromMemory() );       
       }
       
       //how many workers?
-      _workers = me.getProperty(CONFIG.workers).getInt();
+      numberOfWorkers = me.getProperty(CONFIG.workers).getInt();
       
-      _controller = new FilteringController(_urls, factory , _workers, monitor);
+      controller = new FilteringController(_urls, factory , numberOfWorkers, monitor);
 
       //how to filter tasks
       List<Component> filters = componentFactory.instantiateComponentsFor(me, CONFIG.filters);
       DelegatingTaskFilterImpl filter = new DelegatingTaskFilterImpl(filters);      
-      _controller.addFilter( filter );
+      controller.addFilter( filter );
           
-      _controller.run();
+      controller.run();
     } catch (Exception e)
     {
       //HACK!
@@ -155,7 +155,7 @@ private List<URLTask> readURLsFromMemory() throws MalformedURLException
   {
     List<URLTask> urls = new ArrayList<URLTask>();
     //loop through existing memory and add all previously found urls to work plan
-    ResIterator reps = _memory.getAllRepresentations();
+    ResIterator reps = memory.getAllRepresentations();
     while (reps.hasNext())
     {
       Resource representation = reps.nextResource();
@@ -172,7 +172,7 @@ private List<URLTask> readURLsFromMemory() throws MalformedURLException
   private Model readConfig() throws FileNotFoundException
   {
     Model config = ModelFactory.createDefaultModel();
-    config.read( new FileInputStream(_configFile), "");
+    config.read( new FileInputStream(configFile), "");
     
     Model schema = ModelFactory.createDefaultModel();
     schema.read( this.getClass().getResourceAsStream("/config.rdfs"), "");
@@ -182,36 +182,36 @@ private List<URLTask> readURLsFromMemory() throws MalformedURLException
   
   private Resource getSelf(Model config)
   {
-    return config.getResource(_scutterId);
+    return config.getResource(scutterId);
   }
   
   public void stop()
   {
-    if (_controller != null)
+    if (controller != null)
     {
-        _controller.stop();
+        controller.stop();
     }
   }
   
   public void save() throws Exception
   {
     System.out.println("Saving memory");
-    _memory.save();
+    memory.save();
   }
   
   private void setConfig(String config) 
   {
-    _configFile = config;
+    configFile = config;
   }
   
   private void setId(String id)
   {
-    _scutterId = id;
+    scutterId = id;
   }
   
   private void setFreshen(boolean freshen)
   {
-    _freshen = freshen;
+    this.freshen = freshen;
   }
   
   /**
