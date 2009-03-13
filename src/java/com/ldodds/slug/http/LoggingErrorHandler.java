@@ -16,19 +16,20 @@ import com.hp.hpl.jena.rdf.model.RDFErrorHandler;
 public class LoggingErrorHandler implements RDFErrorHandler
 {
     private Logger _logger;
-    private String _name;
+    private String name;
+    private boolean error;
     
     public LoggingErrorHandler(String name)
     {
-        _logger = Logger.getLogger(getClass().getPackage().getName());
-        _name = name;
+        _logger = Logger.getLogger(getClass().getName());
+        this.name = name;
     }
     /** 
      * @see com.hp.hpl.jena.rdf.model.RDFErrorHandler#warning(java.lang.Exception)
      */
     public void warning(Exception thrown)
     {
-        _logger.log(Level.WARNING, "Warning for " + _name, thrown);
+        _logger.log(Level.WARNING, "Warning for " + name, thrown);
     }
 
     /** 
@@ -36,16 +37,20 @@ public class LoggingErrorHandler implements RDFErrorHandler
      */
     public void error(Exception thrown)
     {
-        _logger.log(Level.SEVERE, "Warning for " + _name, thrown);
+        _logger.log(Level.SEVERE, "Error for " + name, thrown);
+        error = true;
     }
 
     /** 
      * @see com.hp.hpl.jena.rdf.model.RDFErrorHandler#fatalError(java.lang.Exception)
      */
-    public void fatalError(Exception arg0)
+    public void fatalError(Exception thrown)
     {
-        // TODO Auto-generated method stub
-
+        _logger.log(Level.SEVERE, "Fatal Error for " + name, thrown);
+        error = true;
     }
 
+    public boolean isError() {
+    	return error;
+    }
 }
