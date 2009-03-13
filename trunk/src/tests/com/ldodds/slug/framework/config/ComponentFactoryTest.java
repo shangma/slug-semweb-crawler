@@ -9,7 +9,7 @@ import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Seq;
 import com.hp.hpl.jena.vocabulary.RDF;
-import com.ldodds.slug.http.RDFConsumer;
+import com.ldodds.slug.http.rdf.RDFParsingConsumer;
 import com.ldodds.slug.http.storage.ResponseStorer;
 import com.ldodds.slug.vocabulary.CONFIG;
 
@@ -91,7 +91,7 @@ public class ComponentFactoryTest extends TestCase
 		List created = _factory.instantiate( (Seq)consumers);
 		assertEquals(2, created.size());
 		assertTrue( created.get(0) instanceof ResponseStorer);
-		assertTrue( created.get(1) instanceof RDFConsumer);		
+		assertTrue( created.get(1) instanceof RDFParsingConsumer);		
 	}
 
 	public void testConfigureIsCalled() throws Exception
