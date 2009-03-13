@@ -35,7 +35,7 @@ public class RegexResourceScanner extends ResourceScanner {
 		try {
 			return new URL(newURL);
 		} catch (MalformedURLException e) {
-			logger.log(Level.WARNING, "Unable to create url from " + url, e);
+			getLogger().log(Level.WARNING, "Unable to create url from " + url, e);
 			
 		}
 		return null;

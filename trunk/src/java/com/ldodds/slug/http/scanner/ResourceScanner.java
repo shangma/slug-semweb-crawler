@@ -52,7 +52,7 @@ public class ResourceScanner extends ScannerImpl {
 		try {
 			return new URL(url);
 		} catch (MalformedURLException e) {
-			logger.log(Level.WARNING, "Unable to create url from " + url, e);
+			getLogger().log(Level.WARNING, "Unable to create url from " + url, e);
 		}
 		return null;
 	}
