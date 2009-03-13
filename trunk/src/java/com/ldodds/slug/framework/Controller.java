@@ -23,21 +23,21 @@ import java.util.logging.*;
  */
 public class Controller implements Runnable
 {
-  private List _workItems;
+  private List<Task> _workItems;
   private WorkerFactory _factory;
   private int _numberOfWorkers;
-  private List _workers;
+  private List<Worker> _workers;
   protected Logger _logger;
   private Monitor _monitor;
   private ThreadGroup _workerThreadGroup;
   private Date _started;
       
-    public Controller(List workItems, WorkerFactory factory, int numberOfWorkers, Monitor monitor)
+    public Controller(List<Task> workItems, WorkerFactory factory, int numberOfWorkers, Monitor monitor)
     {
-        _workItems = new ArrayList(workItems);
+        _workItems = new ArrayList<Task>(workItems);
         _factory = factory;
         _numberOfWorkers = numberOfWorkers;
-        _workers = new ArrayList();
+        _workers = new ArrayList<Worker>();
         _monitor = monitor;                
         _logger = Logger.getLogger( getClass().getPackage().getName() );
        
@@ -88,10 +88,10 @@ public class Controller implements Runnable
     public void stop()
     {
         _logger.fine("Stopping " + _numberOfWorkers + " Workers");        
-        for (Iterator iter = _workers.iterator(); iter.hasNext();)
-    {
-      Worker element = (Worker) iter.next();
-      element.stop();
+        for (Iterator<Worker> iter = _workers.iterator(); iter.hasNext();)
+        {
+        	Worker element = iter.next();
+        	element.stop();
     }
         while (_monitor.getNumberOfActiveWorkers() > 0)
         {

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.ldodds.slug.framework.config.Component;
 import com.ldodds.slug.framework.config.Memory;
 import com.ldodds.slug.framework.config.ComponentImpl;
 
@@ -21,28 +22,26 @@ import com.ldodds.slug.framework.config.ComponentImpl;
  */
 public class DelegatingConsumerImpl extends ComponentImpl implements Consumer
 {
-	private List _consumers;
-	private Memory _memory;	
+	private List<Consumer> consumers;
 	
 	public DelegatingConsumerImpl()
 	{
-		_consumers = new ArrayList();	
+		consumers = new ArrayList<Consumer>();	
 	}
 	
 	public DelegatingConsumerImpl(List consumers)
 	{
-		_consumers = consumers;
-			
+		this.consumers = consumers;			
 	}
 	
-    public void consume(Task workItem, Object results)
+    public void consume(Task workItem, Result result)
     {
-    	for (Iterator iter = _consumers.iterator(); iter.hasNext();)
+    	for (Iterator<Consumer> iter = consumers.iterator(); iter.hasNext();)
         {
-            Consumer element = (Consumer) iter.next();
+            Consumer element = iter.next();
             try
             {            
-            	element.consume(workItem, results);
+            	element.consume(workItem, result);
             } catch (Exception e)
             {
             	e.printStackTrace();
@@ -52,14 +51,14 @@ public class DelegatingConsumerImpl extends ComponentImpl implements Consumer
 	
 	public void addConsumer(Consumer consumer)
 	{
-		_consumers.add(consumer);
+		consumers.add(consumer);
 	}
 
     public void setController(Controller controller)
     {
-		for (Iterator iter = _consumers.iterator(); iter.hasNext();)
+		for (Iterator<Consumer> iter = consumers.iterator(); iter.hasNext();)
 		{
-			Consumer element = (Consumer) iter.next();
+			Consumer element = iter.next();
 			element.setController(controller);
 		}
 
@@ -67,12 +66,12 @@ public class DelegatingConsumerImpl extends ComponentImpl implements Consumer
     
     public void setMemory(Memory memory)
     {
-        for (Iterator iter = _consumers.iterator(); iter.hasNext();)
+        for (Iterator<Consumer> iter = consumers.iterator(); iter.hasNext();)
         {
             Consumer element = (Consumer) iter.next();
             element.setMemory(memory);
         }
         
     }
-     
+
 }

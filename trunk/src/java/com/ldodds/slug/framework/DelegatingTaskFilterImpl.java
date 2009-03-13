@@ -8,29 +8,29 @@ import com.hp.hpl.jena.rdf.model.Resource;
 
 public class DelegatingTaskFilterImpl implements TaskFilter
 {
-	private List _filters;
-	private boolean _configured;
+	private List<TaskFilter> filters;
+	private boolean configured;
 	
 	public DelegatingTaskFilterImpl() 
 	{
-		_filters = new ArrayList();
-		_configured = false;
+		filters = new ArrayList<TaskFilter>();
+		configured = false;
 	}
 
 	public DelegatingTaskFilterImpl(List filters)
 	{
-		_filters = filters;
+		this.filters = filters;
 	}
 	
 	public void addFilter(TaskFilter filter)
 	{
-		_filters.add( filter );
+		filters.add( filter );
 	}
 	public boolean accept(Task task) 
 	{
-    	for (Iterator iter = _filters.iterator(); iter.hasNext();)
+    	for (Iterator<TaskFilter> iter = filters.iterator(); iter.hasNext();)
         {
-            TaskFilter filter = (TaskFilter) iter.next();
+            TaskFilter filter = iter.next();
             if (!filter.accept(task))
             {
             	return false;
@@ -41,16 +41,16 @@ public class DelegatingTaskFilterImpl implements TaskFilter
 
 	public void configure(Resource self) 
 	{
-    	for (Iterator iter = _filters.iterator(); iter.hasNext();)
+    	for (Iterator<TaskFilter> iter = filters.iterator(); iter.hasNext();)
         {
-            TaskFilter filter = (TaskFilter) iter.next();
+            TaskFilter filter = iter.next();
             filter.configure(self);
         }
-    	_configured = true;    	
+    	configured = true;    	
 	}
 
 	public boolean isConfigured()
 	{
-		return _configured;
+		return configured;
 	}
 }
