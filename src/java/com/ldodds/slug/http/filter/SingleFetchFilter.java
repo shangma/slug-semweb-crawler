@@ -4,14 +4,14 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.ldodds.slug.http.RDFConsumer;
 import com.ldodds.slug.http.URLTask;
+import com.ldodds.slug.http.rdf.RDFParsingConsumer;
 
 /**
  * Trivial {@link URLTaskFilter} that simply ensures that 
  * URLs are only visited once within a particular crawl.
  * 
- * Note that this is slightly redundant as {@link RDFConsumer} 
+ * Note that this is slightly redundant as {@link RDFParsingConsumer} 
  * already checks to see whether a URL has been fetched since 
  * the crawl started.
  * 
