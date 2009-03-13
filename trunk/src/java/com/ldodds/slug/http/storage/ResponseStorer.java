@@ -1,24 +1,32 @@
 package com.ldodds.slug.http.storage;
 
-import java.net.*;
 import java.util.logging.Level;
 import java.io.*;
 
 import com.hp.hpl.jena.rdf.model.*;
 
-import com.ldodds.slug.framework.Consumer;
 import com.ldodds.slug.http.Response;
 import com.ldodds.slug.vocabulary.CONFIG;
-import com.ldodds.slug.vocabulary.SCUTTERVOCAB;
 
 /**
- * Saves stuff to disk.
+ * Storage component that simply writes out the retrieved content to disk.
  * 
+ * The URL path is used to generate a directory tree into which the files 
+ * will be saved. A cache directory should be configured in the Scutter 
+ * configuration using the slug:cache property. If not present then data 
+ * will be saved into a directory called "slug-cache" under the current 
+ * users home directory.
+ * 
+ * As the class does not parse or otherwise process the content, it is useful 
+ * for capturing data in the file system for later processing. The class updates 
+ * the Scutter memory to add a scutter:localcopy triple to record the path where 
+ * the file has been saved.
+ *  
  * @author ldodds
  */
-public class ResponseStorer extends AbstractResponseStorer implements Consumer
+public class ResponseStorer extends AbstractResponseStorer
 {
-	private File _cache;
+    private FileStorer storer;
     
 	public ResponseStorer()
 	{
@@ -28,79 +36,46 @@ public class ResponseStorer extends AbstractResponseStorer implements Consumer
 	public ResponseStorer(File cache)
 	{
 		super();	    
-		_cache = cache;
-		_logger.log(Level.INFO, "Cache directory:", _cache);
-	}
-
-	private File getFileName(URL url)
-	{
-		String fileName = url.getFile();
-		
-		fileName = fileName.replace('?','_').replace('&', '_');
-		
-		File domain = new File(_cache, url.getHost());
-		if (!domain.exists())
-		{
-			domain.mkdir();
-		}
-		File representation = new File(domain, fileName);
-		File parent = representation.getParentFile();
-		parent.mkdirs();
-		return representation;
+		storer = new FileStorer( cache );
+		getLogger().log(Level.INFO, "Cache directory:", cache);
 	}
 	
 	void store(Resource representation, Response response) throws Exception
 	{
-		File localCopy = getFileName(response.getRequestURL());			
-		store(response, localCopy);
-		
-		//just in case
-		if (representation.hasProperty(SCUTTERVOCAB.localCopy)
-			&& 
-			!localCopy.toString().equals(
-				representation.getProperty(SCUTTERVOCAB.localCopy).getObject().toString() 
-				) 
-			)
-		{
+		final Response resp = response;
+		storer.store(getMemory(), representation, response.getRequestURL(), 
+				new DataSource() {
+
+					public String getData() {
+						
+						return resp.getContentType().toString();
+					}
 			
-			representation.removeAll(SCUTTERVOCAB.localCopy);
-		}			
-					
-		representation.addProperty(SCUTTERVOCAB.localCopy, localCopy.toString());
-		
+		});
 	}
 	
-	private void store(Response response, File toFile) throws Exception
-	{
-		BufferedWriter out = 
-			new BufferedWriter( new FileWriter(toFile) ); 
-
-		out.write(response.getContent().toString());
-		
-		out.flush();
-		out.close();		
-	}
-
     protected boolean doConfig(Resource self) 
     {
     	//if we don't already have a cache, then look for one
     	//in the config.
+    	File base = null;
     	if (self.hasProperty(CONFIG.cache))
     	{
     		String directory = self.getProperty(CONFIG.cache).getString();
-    		_cache = new File(directory);
+    		base = new File(directory);
     	}    	
     	else
     	{
-    		_cache = getDefaultCacheDir();
+    		base = getDefaultCacheDir();
     	}
+    	storer = new FileStorer(base);
     	return true;
     }
     
 	/**
      * Get the directory into which offline copies of documents will be written
      */
-    private File getDefaultCacheDir()
+    public static File getDefaultCacheDir()
     {
         File cache = new File(System.getProperty("user.home"), "slug-cache");
 		
@@ -110,4 +85,6 @@ public class ResponseStorer extends AbstractResponseStorer implements Consumer
 		}
 		return cache;
     }
+
+    
 }
