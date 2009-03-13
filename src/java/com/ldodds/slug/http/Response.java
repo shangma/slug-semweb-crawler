@@ -4,10 +4,13 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import com.ldodds.slug.framework.ResultImpl;
+
 /**
+ * 
  * @author ldodds
  */
-public class Response
+public class Response extends ResultImpl
 {
     private URL _url;
     private Map<String,List<String>> _responseHeaders;
@@ -15,6 +18,7 @@ public class Response
     
     public Response(URL url, Map<String,List<String>> headers, StringBuffer content)
     {
+    	super(true, false);
         _url = url;
         _responseHeaders = headers;
         _content = content;
@@ -33,5 +37,14 @@ public class Response
     public StringBuffer getContent()
     {
         return _content;
-    }    
+    }
+    
+    public String getContentType() {
+    	List<String> contentTypes = _responseHeaders.get("Content-Type");
+    	String contentType = null;
+    	if (contentTypes != null && !contentTypes.isEmpty()) {
+    		contentType = contentTypes.get(0);
+    	}
+    	return contentType;
+    }
 }
