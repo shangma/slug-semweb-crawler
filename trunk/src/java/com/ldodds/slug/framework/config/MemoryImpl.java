@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.io.File;
 import java.io.StringReader;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
@@ -234,6 +235,25 @@ public abstract class MemoryImpl implements Memory
   }
 
 
+  public void addLocalCopy(Resource representation, File localCopy) {
+	  _model.enterCriticalSection(Lock.WRITE);
+	  try {
+		// just in case
+		if (representation.hasProperty(SCUTTERVOCAB.localCopy)
+				&& !localCopy.toString().equals(
+						representation.getProperty(SCUTTERVOCAB.localCopy)
+								.getObject().toString())) {
+
+			representation.removeAll(SCUTTERVOCAB.localCopy);
+		}
+
+		representation
+				.addProperty(SCUTTERVOCAB.localCopy, localCopy.toString());
+	  } finally {
+		  _model.leaveCriticalSection();
+	  }
+	}
+  
   public ResIterator getAllRepresentations() {
     return _model.listSubjectsWithProperty(RDF.type, SCUTTERVOCAB.Representation);      
   }
