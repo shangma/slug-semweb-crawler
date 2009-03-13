@@ -1,40 +1,32 @@
 package com.ldodds.slug.http.storage;
 
-import java.util.logging.Logger;
-
 import com.hp.hpl.jena.rdf.model.Resource;
-import com.ldodds.slug.framework.Consumer;
-import com.ldodds.slug.framework.Controller;
+import com.ldodds.slug.framework.ConsumerImpl;
+import com.ldodds.slug.framework.Result;
 import com.ldodds.slug.framework.Task;
-import com.ldodds.slug.framework.config.ComponentImpl;
-import com.ldodds.slug.framework.config.Memory;
 import com.ldodds.slug.http.Response;
 
-public abstract class AbstractResponseStorer extends ComponentImpl implements Consumer
+/**
+ * Abstract base class for consumers that store the crawled data
+ * 
+ * Derived classes should implement the store method.
+ * 
+ * @author ldodds
+ */
+public abstract class AbstractResponseStorer extends ConsumerImpl
 {
-	//used to say where the local copy of the file is
-	protected Controller _controller;
-	protected Logger _logger;
-	protected Memory _memory;
 
-	public AbstractResponseStorer() 
-	{
-		super();
-		_logger = Logger.getLogger(getClass().getPackage().getName());
-	}
-
-    public void consume(Task workItem, Object results)
+    public void consume(Task workItem, Result result)
     {
-    	if (results == null)
-    	{
+    	if (result == null) {
     		return;
     	}
     	
     	try
     	{    	
-			Response response = (Response)results;
+			Response response = (Response)result;
 			Resource representation =
-				_memory.getRepresentation( response.getRequestURL() );
+				getMemory().getRepresentation( response.getRequestURL() );
 			if (representation == null)
 			{
 				return;
@@ -48,15 +40,7 @@ public abstract class AbstractResponseStorer extends ComponentImpl implements Co
     	}    	
     }
 
-    public void setController(Controller controller)
-    {
-    	_controller = controller;
-    }
-
-    public void setMemory(Memory memory)
-    {
-        _memory = memory;
-    }
 
     abstract void store(Resource resource, Response response) throws Exception;
+
 }
