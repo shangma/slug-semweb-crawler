@@ -30,7 +30,7 @@
 
    <path id="classpath">
       <fileset dir="${lib.dir}">
-         <include name="*.jar"/>
+         <include name="**/*.jar"/>
       </fileset>
    </path>
     
@@ -167,7 +167,7 @@
     </antcall>
   </target>
   
-  
+
   <target name="generate-schema-class" description="invoke jena.schemagen">
     <echo>Generating ${class}.java</echo>
     <tstamp>
@@ -192,7 +192,7 @@
       <arg value="--rdfs"/>
     </java>   
   </target>
-  
+	
   <target name="generate-location-mapping" description="Generate Location Mapping Config from memory">
     <property name="mapping" value="mapping.n3"/>
     <echo>Generating Location Mapping ${mapping} from source file ${memory}</echo>
