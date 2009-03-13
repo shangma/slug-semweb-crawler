@@ -27,7 +27,7 @@ public class URLRetrievalWorker extends ProducerWorkerImpl
   /**
    * @see com.ldodds.slug.framework.ProducerWorkerImpl#doTask(java.lang.Object)
    */
-  protected Object doTask(Task workItem) {
+  protected Result doTask(Task workItem) {
     URLTask urlTask = (URLTask)workItem;
     Response response = null;
         
@@ -52,37 +52,38 @@ public class URLRetrievalWorker extends ProducerWorkerImpl
             } catch (UnknownHostException uhe)
             {
               _memory.makeReasonAndSkip(rep, "UnknownHostException: " + uhe.getMessage());              
-              return null;            
+              return ResultImpl.failure();            
             } catch (IOException ie)
             {
               _logger.warning("IOException on " + urlTask.getURL());
               _memory.makeReasonAndError(fetch, ie);
-              return null;
+              return ResultImpl.failure();
             }
             
       if (connection.getResponseCode()== HttpURLConnection.HTTP_NOT_FOUND)
       {
         _memory.makeReasonAndSkip(rep, "404, Not Found");
-        return null;
+        return ResultImpl.failure();
       }
 
       if (connection.getResponseCode()== HttpURLConnection.HTTP_FORBIDDEN)
       {
         _memory.makeReasonAndSkip(rep, "403, Not Authorized");
-        return null;
+        return ResultImpl.failure();
       }
 
       if (connection.getResponseCode()== HttpURLConnection.HTTP_GONE)
       {
         _memory.makeReasonAndSkip(rep, "410, Gone");
-        return null;
+        return ResultImpl.failure();
       }     
       
       if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED)
       {
-        return null;
+        return ResultImpl.noop();
       }
-            
+        
+      //success, and not no-op
             response = new Response(
                         urlTask.getURL(), 
                         connection.getHeaderFields(), 
