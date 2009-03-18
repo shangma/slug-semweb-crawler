@@ -13,6 +13,10 @@ public class FileStorer implements DataStorer {
 
 	private File base;
 	
+	public FileStorer() {
+		this(null);
+	}
+	
 	public FileStorer(File base) {
 		this.base = base;
 	}
@@ -60,6 +64,9 @@ public class FileStorer implements DataStorer {
 		return representation;
 	}
 	
-	
+
+	public void setBaseDirectory(File dir) {
+		base = dir;
+	}
 	
 }

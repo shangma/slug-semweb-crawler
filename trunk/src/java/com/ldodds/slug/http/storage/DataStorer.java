@@ -1,5 +1,6 @@
 package com.ldodds.slug.http.storage;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -16,4 +17,6 @@ public interface DataStorer {
 	 */
 	void store(Memory memory, Resource representation, URL origin, DataSource source)
 		throws IOException;
+	
+	void setBaseDirectory(File base);
 }
