@@ -46,6 +46,8 @@ public class RDFParsingConsumer extends AbstractRDFConsumer {
 		Model model = ModelFactory.createDefaultModel();
 		RDFReader reader = model.getReader();
 		
+		configureReader(reader);
+		
 		LoggingErrorHandler errorHandler = new LoggingErrorHandler(task.getURL()
 				.toString());
 		
@@ -59,4 +61,15 @@ public class RDFParsingConsumer extends AbstractRDFConsumer {
 		return model;
 	}
 	
+	/**
+	 * Can be overridden by sub-classes to configure the RDFReader before it is used to 
+	 * parse an RDF/XML document.
+	 *
+	 * The default implementation does nothing.
+	 * 
+	 * @param reader
+	 */
+	protected void configureReader(RDFReader reader) {
+		
+	}
 }
