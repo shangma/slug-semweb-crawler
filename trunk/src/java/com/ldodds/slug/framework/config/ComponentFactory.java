@@ -50,24 +50,30 @@ public class ComponentFactory
   public Component instantiate(Resource resource)
     throws ClassNotFoundException, IllegalAccessException, 
       InstantiationException
-  {
-    if ( !resource.hasProperty(CONFIG.impl) )
-    {
-      return null;
-    }
-    
-    Class<?> clazz = Class.forName(
-        resource.getProperty(CONFIG.impl).getString());
-    Object obj = clazz.newInstance();
-    if (! (obj instanceof Component) )
-    {
-      throw new RuntimeException("Configured class doesn't implement Component");
-    }
-    Component component = (Component)obj;
+  {    
+    Component component = (Component)instantiateObject(resource);
     component.configure(resource);
     return component;
   }
   
+  public Object instantiateObject(Resource resource)
+  	throws ClassNotFoundException, IllegalAccessException, 
+  	InstantiationException {
+	    if ( !resource.hasProperty(CONFIG.impl) )
+	    {
+	      return null;
+	    }
+	    
+	    Class<?> clazz = Class.forName(
+	        resource.getProperty(CONFIG.impl).getString());
+	    Object obj = clazz.newInstance();
+	    if (! (obj instanceof Component) )
+	    {
+	      throw new RuntimeException("Configured class doesn't implement Component");
+	    }
+	    return obj;
+  }
+
   /**
    * Instantiate a List of Resources as Components, returning them 
    * within a new list.
