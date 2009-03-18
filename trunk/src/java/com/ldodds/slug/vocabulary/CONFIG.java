@@ -49,6 +49,8 @@ public class CONFIG {
     public static final Property replacementRegex = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/replacementRegex" );
     public static final Property replacementValue = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/replacementValue" );
     
+    public static final Property storer = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/storer" );
+    
     public static final Property userAgent = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/userAgent" );
     
     public static final Resource MemoryHolder = m_model.createResource( "http://purl.org/NET/schemas/slug/config/MemoryHolder" );
