@@ -46,14 +46,25 @@ public class ComponentImpl implements Component
 
 	protected Component instantiateReferenced(Resource self, Property property) {
 		  Statement s = self.getProperty( property );
-		  Resource scan = (Resource)s.getObject();
+		  Resource r = (Resource)s.getObject();
 	      ComponentFactory componentFactory = new ComponentFactory();
 	      try {
-	    	  return componentFactory.instantiate(scan);	    	 
+	    	  return componentFactory.instantiate(r);	    	 
 	      } catch (Exception e) {
 	    	  throw new RuntimeException(e);
 	      }		
 	}
+
+	protected Object instantiateObject(Resource self, Property property) {
+		  Statement s = self.getProperty( property );
+		  Resource r = (Resource)s.getObject();
+	      ComponentFactory componentFactory = new ComponentFactory();
+	      try {
+	    	  return componentFactory.instantiateObject(r);	    	 
+	      } catch (Exception e) {
+	    	  throw new RuntimeException(e);
+	      }		
+	}	
 	
 	protected Logger getLogger() {
 		return logger;
