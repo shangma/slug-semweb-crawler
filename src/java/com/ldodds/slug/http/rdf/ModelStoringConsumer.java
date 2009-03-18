@@ -11,12 +11,13 @@ import com.ldodds.slug.framework.Result;
 import com.ldodds.slug.http.Response;
 import com.ldodds.slug.http.URLTask;
 import com.ldodds.slug.http.storage.DataSource;
+import com.ldodds.slug.http.storage.DataStorer;
 import com.ldodds.slug.http.storage.FileStorer;
 import com.ldodds.slug.http.storage.ResponseStorer;
 import com.ldodds.slug.vocabulary.CONFIG;
 
 public class ModelStoringConsumer extends ModelDependentConsumer {
-    private FileStorer storer;
+    private DataStorer storer;
     
 	@Override
 	protected void processModel(URLTask task, Result result, Model model) {
@@ -66,7 +67,12 @@ public class ModelStoringConsumer extends ModelDependentConsumer {
     	{
     		base = ResponseStorer.getDefaultCacheDir();
     	}
-    	storer = new FileStorer(base);
+		if (self.hasProperty(CONFIG.storer)) {
+			storer = (DataStorer) instantiateObject(self, CONFIG.storer);
+		} else {
+			storer = new FileStorer();
+		}
+		storer.setBaseDirectory(base);
     	return true;
     }
 	

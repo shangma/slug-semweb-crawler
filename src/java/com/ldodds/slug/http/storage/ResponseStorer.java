@@ -6,6 +6,8 @@ import java.io.*;
 import com.hp.hpl.jena.rdf.model.*;
 
 import com.ldodds.slug.http.Response;
+import com.ldodds.slug.http.scanner.Scanner;
+import com.ldodds.slug.http.scanner.SeeAlsoScanner;
 import com.ldodds.slug.vocabulary.CONFIG;
 
 /**
@@ -26,7 +28,7 @@ import com.ldodds.slug.vocabulary.CONFIG;
  */
 public class ResponseStorer extends AbstractResponseStorer
 {
-    private FileStorer storer;
+    private DataStorer storer;
     
 	public ResponseStorer()
 	{
@@ -68,7 +70,12 @@ public class ResponseStorer extends AbstractResponseStorer
     	{
     		base = getDefaultCacheDir();
     	}
-    	storer = new FileStorer(base);
+		if (self.hasProperty(CONFIG.storer)) {
+			storer = (DataStorer) instantiateObject(self, CONFIG.storer);
+		} else {
+			storer = new FileStorer();
+		}
+		storer.setBaseDirectory(base);    	    	
     	return true;
     }
     
