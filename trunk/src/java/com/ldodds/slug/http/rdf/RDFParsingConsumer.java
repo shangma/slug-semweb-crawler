@@ -38,8 +38,8 @@ public class RDFParsingConsumer extends AbstractRDFConsumer {
 	 */
 	protected Model getModel(URLTask task, Response response, String baseURL) {
 		//FIXME support other formats
-		if ( response.getContentType() != "application/rdf+xml" ) {
-			getLogger().log(Level.FINE, "Cannot parse non RDF/XML data");
+		if ( !"application/rdf+xml".equals( response.getContentType() )  ) {
+			getLogger().log(Level.FINE, "Cannot parse non RDF/XML data:" + response.getContentType());
 			return null;
 		}
 		
@@ -56,6 +56,7 @@ public class RDFParsingConsumer extends AbstractRDFConsumer {
 				.toString()), baseURL);
 		
 		if ( errorHandler.isError() ) {
+			getLogger().log(Level.SEVERE, "Error processing RDF, not adding Model to context");
 			return null;
 		}
 		return model;
