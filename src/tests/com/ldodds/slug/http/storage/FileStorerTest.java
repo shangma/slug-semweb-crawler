@@ -28,49 +28,60 @@ public class FileStorerTest extends TestCase {
 		}
 	}
 
-	public void testGetFileNameNoFile() throws Exception {
+	public void testGetFileNoFile() throws Exception {
 		File tmp = getTempDir();
 		storer = new FileStorer(tmp);
 		
 		URL simple = new URL("http://www.example.org/");
 		
-		File filename = storer.getFileName(simple);
+		File filename = storer.getFile(simple);
 		assertNotNull(filename);
 		assertEquals(tmp.getAbsolutePath() + File.separator + "www.example.org/index", filename.getAbsolutePath());		
 	}
 
-	public void testGetFileNameNoFileWithPath() throws Exception {
+	public void testGetFileNoFileWithPath() throws Exception {
 		File tmp = getTempDir();
 		storer = new FileStorer(tmp);
 		
 		URL simple = new URL("http://www.example.org/a/b/c/");
 		
-		File filename = storer.getFileName(simple);
+		File filename = storer.getFile(simple);
 		assertNotNull(filename);
 		assertEquals(tmp.getAbsolutePath() + File.separator + "www.example.org/a/b/c", filename.getAbsolutePath());		
 	}
 
 	
+	public void testGetFile() throws Exception {
+		File tmp = getTempDir();
+		storer = new FileStorer(tmp);
+		
+		URL simple = new URL("http://www.example.org/a/b/c/filename.rdf");
+		
+		File filename = storer.getFile(simple);
+		assertNotNull(filename);
+		assertEquals(tmp.getAbsolutePath() + File.separator + "www.example.org/a/b/c/filename.rdf", filename.getAbsolutePath());
+	}
+
+	public void testGetFileWithQueryString() throws Exception {
+		File tmp = getTempDir();
+		storer = new FileStorer(tmp);
+		
+		URL simple = new URL("http://www.example.org/a/b/c/filename?foo=bar");
+		
+		File filename = storer.getFile(simple);
+		assertNotNull(filename);
+		assertEquals(tmp.getAbsolutePath() + File.separator + "www.example.org/a/b/c/filename_foo_bar", filename.getAbsolutePath());
+	}
+
 	public void testGetFileName() throws Exception {
 		File tmp = getTempDir();
 		storer = new FileStorer(tmp);
 		
 		URL simple = new URL("http://www.example.org/a/b/c/filename.rdf");
 		
-		File filename = storer.getFileName(simple);
+		String filename = storer.getFileName(simple);
 		assertNotNull(filename);
-		assertEquals(tmp.getAbsolutePath() + File.separator + "www.example.org/a/b/c/filename.rdf", filename.getAbsolutePath());
-	}
-
-	public void testGetFileNameWithQueryString() throws Exception {
-		File tmp = getTempDir();
-		storer = new FileStorer(tmp);
-		
-		URL simple = new URL("http://www.example.org/a/b/c/filename?foo=bar");
-		
-		File filename = storer.getFileName(simple);
-		assertNotNull(filename);
-		assertEquals(tmp.getAbsolutePath() + File.separator + "www.example.org/a/b/c/filename_foo_bar", filename.getAbsolutePath());
+		assertEquals("/a/b/c/filename.rdf", filename );
 	}
 	
 	
@@ -78,5 +89,6 @@ public class FileStorerTest extends TestCase {
 		String tmpdir = System.getProperty("java.io.tmpdir");
 		return new File(tmpdir);
 	}
-		
+
+	
 }

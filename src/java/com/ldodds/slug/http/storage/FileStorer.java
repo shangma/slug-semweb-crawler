@@ -24,7 +24,7 @@ public class FileStorer implements DataStorer {
 	public void store(Memory memory, Resource representation, URL origin,
 			DataSource source) throws IOException {
 
-		File localCopy = getFileName( origin );			
+		File localCopy = getFile( origin );			
 		store(source, localCopy);
 		memory.addLocalCopy(representation, localCopy);
 	}
@@ -40,18 +40,9 @@ public class FileStorer implements DataStorer {
 		out.close();		
 	}
 	
-	protected File getFileName(URL url)
+	protected File getFile(URL url)
 	{
-		String fileName = url.getFile();
-		
-		if (fileName == null || "".equals(fileName) || "/".equals(fileName) ) {
-			fileName = "index";
-		}
-		
-		fileName = fileName.replace('?','_')
-						   .replace('&', '_')
-						   .replace(';', '_')
-						   .replace('=', '_');
+		String fileName = getFileName(url);
 		
 		File domain = new File(base, url.getHost());
 		if (!domain.exists())
@@ -62,6 +53,24 @@ public class FileStorer implements DataStorer {
 		File parent = representation.getParentFile();
 		parent.mkdirs();
 		return representation;
+	}
+
+	/**
+	 * @param url
+	 * @return
+	 */
+	protected String getFileName(URL url) {
+		String fileName = url.getFile();
+		
+		if (fileName == null || "".equals(fileName) || "/".equals(fileName) ) {
+			fileName = "index";
+		}
+		
+		fileName = fileName.replace('?','_')
+						   .replace('&', '_')
+						   .replace(';', '_')
+						   .replace('=', '_');
+		return fileName;
 	}
 	
 
