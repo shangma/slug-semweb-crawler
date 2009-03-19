@@ -50,7 +50,7 @@ public class ResponseStorer extends AbstractResponseStorer
 
 					public String getData() {
 						
-						return resp.getContentType().toString();
+						return resp.getContent().toString();
 					}
 			
 		});
