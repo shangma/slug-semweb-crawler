@@ -50,7 +50,12 @@ public class ComponentFactory
   public Component instantiate(Resource resource)
     throws ClassNotFoundException, IllegalAccessException, 
       InstantiationException
-  {    
+  {
+	Object obj = instantiateObject(resource);
+	if (! (obj instanceof Component) ) {
+	      throw new RuntimeException("Configured class " + resource.getURI() + "doesn't implement Component");
+	}
+	  
     Component component = (Component)instantiateObject(resource);
     component.configure(resource);
     return component;
@@ -67,10 +72,6 @@ public class ComponentFactory
 	    Class<?> clazz = Class.forName(
 	        resource.getProperty(CONFIG.impl).getString());
 	    Object obj = clazz.newInstance();
-	    if (! (obj instanceof Component) )
-	    {
-	      throw new RuntimeException("Configured class doesn't implement Component");
-	    }
 	    return obj;
   }
 
