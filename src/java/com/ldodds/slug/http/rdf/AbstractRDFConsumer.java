@@ -41,7 +41,7 @@ public abstract class AbstractRDFConsumer extends ConsumerImpl {
 		Resource representation = getMemory()
 				.getRepresentation(urlWorkItem.getURL());
 	
-		if (representation == null) {
+		if (representation == null) {			
 			return;
 		}
 	
@@ -56,8 +56,9 @@ public abstract class AbstractRDFConsumer extends ConsumerImpl {
 			Model model = getModel(urlWorkItem, response, baseURL);
 				
 			if (model != null) {
+				getLogger().log(Level.FINEST, "Processing parsed model for " + baseURL);
 				processModel(urlWorkItem, result, representation, model);
-			}
+			}			
 			
 		} catch (Exception e) {
 			getLogger().log(Level.SEVERE, "Exception when consuming response as RDF", e);
