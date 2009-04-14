@@ -31,7 +31,7 @@ public abstract class AbstractResponseStorer extends ConsumerImpl
 			{
 				return;
 			}
-			
+			//TODO support filtering before call to store, e.g. based on the response type.
 			store(representation, response);
 			
     	} catch (Exception e)
