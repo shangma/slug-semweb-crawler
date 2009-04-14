@@ -3,7 +3,6 @@ package com.ldodds.slug.http.scanner;
 import java.net.URL;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.ldodds.slug.framework.config.ComponentImpl;
