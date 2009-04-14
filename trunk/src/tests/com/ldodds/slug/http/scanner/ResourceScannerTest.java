@@ -56,7 +56,7 @@ public class ResourceScannerTest extends TestCase {
 		assertEquals(0, found.size());
 	}
 	
-	public void testResources() {
+	public void testWithObjectResources() {
 		scanner = new ResourceScanner();		
 		
 		Model model = ModelFactory.createDefaultModel();
@@ -72,6 +72,20 @@ public class ResourceScannerTest extends TestCase {
 		
 		assertNotNull(found);
 		assertEquals(3, found.size());
+	}		
+
+	public void testWithSubjectResources() {
+		scanner = new ResourceScanner();		
+		
+		Model model = ModelFactory.createDefaultModel();
+		Resource resource = model.createResource("http://www.example.org");
+		model.add(resource, OWL.sameAs, model.createResource("http://www.example.com/b.rdf#foo") );
+		model.add(model.createResource("http://www.example.com/other"), OWL.sameAs, resource );
+		
+		Set<URL> found = scanner.findURLs( model , origin );
+		
+		assertNotNull(found);
+		assertEquals(2, found.size());
 	}		
 	
 }
