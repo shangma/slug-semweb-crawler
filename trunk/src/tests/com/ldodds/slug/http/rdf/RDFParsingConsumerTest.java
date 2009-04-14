@@ -66,6 +66,30 @@ public class RDFParsingConsumerTest extends TestCase {
 		assertNotNull( result.getContext(AbstractRDFConsumer.RDF_MODEL) );
 	}
 
+	public void testParseValidDocumentWithCharset() throws Exception {
+		URL url = new URL("http://www.example.org");
+		Resource rep = createMock(Resource.class);
+		memory = createMock(Memory.class);
+		expect( memory.getRepresentation(url) ).andReturn( rep );
+		memory.addRawTripleCount(rep, 1);
+		
+		consumer = new RDFParsingConsumer();		
+		consumer.setMemory(memory);
+		consumer.setController(controller);
+		consumer.configure(self);
+		
+		Map<String,List<String>> headers = addHeaders(null, "Content-Type", "application/rdf+xml; charset=UTF-8");
+		
+		task = new URLTaskImpl( url );
+		Response result = createResult("http://www.example.org", headers, "valid.n3", "RDF/XML");
+		
+		replay(memory);
+		consumer.consume(task, result);
+		verify(memory);
+		
+		assertNotNull( result.getContext(AbstractRDFConsumer.RDF_MODEL) );
+	}
+	
 	public void testParseWithWrongMimeType() throws Exception {
 		URL url = new URL("http://www.example.org");
 		Resource rep = createMock(Resource.class);
