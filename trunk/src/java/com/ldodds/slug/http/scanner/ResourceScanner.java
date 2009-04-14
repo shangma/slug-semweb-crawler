@@ -3,6 +3,7 @@ package com.ldodds.slug.http.scanner;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -24,28 +25,31 @@ public class ResourceScanner extends ScannerImpl {
 		
 		Set<URL> found = new HashSet<URL>(5);
 		
-		NodeIterator objects = toScan.listObjects();
-		while ( objects.hasNext() ) {
-			//System.out.println(System.currentTimeMillis() + " node");
-			RDFNode node = objects.nextNode();
+		addAcceptableResourcesToSet(found, toScan.listObjects() );
+		addAcceptableResourcesToSet(found, toScan.listSubjects() );
+		return found;
+	}
+
+	/**
+	 * @param urls
+	 * @param iterator
+	 */
+	private void addAcceptableResourcesToSet(Set<URL> urls,
+			Iterator iterator) {
+		while ( iterator.hasNext() ) {
+
+			RDFNode node = (RDFNode)iterator.next();
 			if ( node.isResource() && !node.isAnon() ) {
 				String uri = ((Resource)node).getURI();
 				if ( isAcceptable(uri) ) {
-					//System.out.println(System.currentTimeMillis() + " create url");					
 					URL url = createURL(uri);
-					//System.out.println(System.currentTimeMillis() + " create url finsihed");
 					if (url != null) {
-						//System.out.println(System.currentTimeMillis() + " adding");
-						found.add( url );
-						//System.out.println(System.currentTimeMillis() + " added");
+						urls.add( url );
 					}
 				}
 				
 			}
-			//System.out.println(System.currentTimeMillis() + " completed");
 		}
-		
-		return found;
 	}
 
 	protected URL createURL(String url) {
