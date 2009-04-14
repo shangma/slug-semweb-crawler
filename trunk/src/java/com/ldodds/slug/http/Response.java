@@ -47,4 +47,12 @@ public class Response extends ResultImpl
     	}
     	return contentType;
     }
+    
+    public String getContentTypeWithoutCharset() {
+    	String contentType = getContentType();
+    	if (contentType.indexOf(";") == -1) {
+    		return contentType;
+    	}
+    	return contentType.split(";")[0];
+    }
 }
