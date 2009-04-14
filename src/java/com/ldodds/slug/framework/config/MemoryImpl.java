@@ -132,8 +132,8 @@ public abstract class MemoryImpl implements Memory
     
   public Resource makeRepresentation(URL url)
   {
-    Resource rep = _model.createResource(SCUTTERVOCAB.Representation);
     _model.enterCriticalSection(Lock.WRITE);
+    Resource rep = _model.createResource(SCUTTERVOCAB.Representation);    
     try {
       _model.add(rep, SCUTTERVOCAB.source, 
       _model.createResource(url.toString()) );
@@ -146,9 +146,8 @@ public abstract class MemoryImpl implements Memory
   
   public Resource makeFetch(Resource representation) 
   {
-        Resource fetch = _model.createResource(SCUTTERVOCAB.Fetch);
-
         _model.enterCriticalSection(Lock.WRITE);
+        Resource fetch = _model.createResource(SCUTTERVOCAB.Fetch);        
         try
         {
         fetch.addProperty(DC.date, 
@@ -196,9 +195,9 @@ public abstract class MemoryImpl implements Memory
   }
 
   public Resource makeReasonAndSkip(Resource representation, String msg) 
-    {
-    Resource reason = _model.createResource(SCUTTERVOCAB.Reason);
+    {    
         _model.enterCriticalSection(Lock.WRITE);
+        Resource reason = _model.createResource(SCUTTERVOCAB.Reason);
         try
         {
         reason.addProperty(DC.description, msg);
@@ -208,13 +207,13 @@ public abstract class MemoryImpl implements Memory
         } finally {
             _model.leaveCriticalSection();
         }
-    return reason;
+        return reason;
   }
 
   public Resource makeReasonAndError(Resource fetch, String msg) 
-    {
-        Resource reason = _model.createResource(SCUTTERVOCAB.Reason);
+    {        
         _model.enterCriticalSection(Lock.WRITE);
+        Resource reason = _model.createResource(SCUTTERVOCAB.Reason);
         try
         {
         reason.addProperty(DC.description, msg);
