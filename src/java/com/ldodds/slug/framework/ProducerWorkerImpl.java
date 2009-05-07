@@ -42,7 +42,7 @@ public abstract class ProducerWorkerImpl extends WorkerImpl implements Producer
 	            try
 	            {
 	            	//_logger.finest( getName() + " waiting for task");
-	            	Thread.sleep(1000);
+	            	Thread.sleep(500);
 	            	if (_shouldStop)
 	            	{
 	            		break;          
@@ -60,12 +60,13 @@ public abstract class ProducerWorkerImpl extends WorkerImpl implements Producer
 	        {
 				Result result = doTask(_workItem);
 				//TODO capture no-ops and failures
-				if (result != null && result.isSuccess() )
+				if (_consumer != null && result != null && result.isSuccess() )
 				{
+					_logger.finest("Consuming results of successful task: " + _workItem.getId());
 					_consumer.consume(_workItem, result);
 				}
 				//TODO note error?
-				_controller.completedTask(this, _workItem);
+				_controller.completedTask(this, _workItem, result);
 	        }
 	        if (_shouldStop)
 	        {
