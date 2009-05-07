@@ -40,11 +40,7 @@ public abstract class AbstractRDFConsumer extends ConsumerImpl {
 		//a scutter:source property of that url 
 		Resource representation = getMemory()
 				.getRepresentation(urlWorkItem.getURL());
-	
-		if (representation == null) {			
-			return;
-		}
-	
+		
 		//Now find the source property for that resource, and use that
 		//as our base URL
 		//FIXME: So this is always the same as the workItem url...
