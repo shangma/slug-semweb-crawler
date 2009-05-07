@@ -28,7 +28,11 @@ public class RegexFilter extends URLTaskFilter
     protected boolean acceptURL(URLTask task)
     {
         Matcher matcher = _pattern.matcher(task.getURL().toString());
-        return !matcher.find();
+        boolean accept = !matcher.find();
+        if (!accept) {
+        	logRejection(task, "regex");
+        }
+        return accept;
     }
 
     protected boolean doConfig(Resource self) 
@@ -36,6 +40,7 @@ public class RegexFilter extends URLTaskFilter
     	if (self.hasProperty(CONFIG.filter))
     	{
     		String regex = self.getProperty(CONFIG.filter).getString();
+    		getLogger().config("Filter regex:" + regex);
     		_pattern = Pattern.compile(regex);
     		return true;
     	}
