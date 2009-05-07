@@ -18,7 +18,7 @@ public abstract class ScannerImpl extends ComponentImpl implements Scanner {
 		if ( urls.contains(origin) ) {
 			urls.remove(origin);
 		}
-		getLogger().log(Level.FINEST, "Extracted " + urls.size()  + " urls using data from " + origin);
+		getLogger().log(Level.FINER, "Extracted " + urls.size()  + " urls using data from " + origin);
 		return urls;
 	}
 
