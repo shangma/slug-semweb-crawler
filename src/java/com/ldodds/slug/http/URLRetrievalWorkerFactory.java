@@ -2,6 +2,7 @@ package com.ldodds.slug.http;
 
 import com.ldodds.slug.framework.*;
 import com.ldodds.slug.framework.config.Memory;
+import com.ldodds.slug.framework.config.MemoryFactory;
 
 /**
  * @author ldodds
@@ -10,14 +11,14 @@ public class URLRetrievalWorkerFactory extends WorkerFactoryImpl
 {
   
     private Consumer _consumer;
-	private Memory _memory;
+	private MemoryFactory memoryFactory;
 	        
 	/**
 	 * @see com.ldodds.slug.framework.WorkerFactoryImpl#createWorker(java.lang.String)
 	 */
 	protected Worker createWorker(String name)
 	{
-        URLRetrievalWorker worker = new URLRetrievalWorker(_memory, name);
+        URLRetrievalWorker worker = new URLRetrievalWorker( memoryFactory.getMemory() , name);
         worker.setConsumer(_consumer); 
         return worker;
 	}
@@ -28,9 +29,9 @@ public class URLRetrievalWorkerFactory extends WorkerFactoryImpl
         _consumer = consumer;        
     }
 
-	public void setMemory(Memory memory)
+	public void setMemoryFactory(MemoryFactory memoryFactory)
 	{
-		_memory = memory;
+		this.memoryFactory = memoryFactory;
 	}
     
     public void setController(Controller controller)
