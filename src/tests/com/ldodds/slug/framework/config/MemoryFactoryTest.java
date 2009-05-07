@@ -44,124 +44,20 @@ public class MemoryFactoryTest extends TestCase
    * Test method for
    * 'com.ldodds.slug.framework.config.MemoryFactory.getMemoryFor(Resource)'
    */
-  public void testGetMemoryFor() 
+  public void testGetMemory() 
     {
         Resource resource = _config.getResource("file-memory-scutter");
-        Memory memory = new MemoryFactory().getMemoryFor(resource);
+        Memory memory = new MemoryFactory(resource).getMemory();
         assertNotNull(memory);
         assertTrue( memory instanceof FileMemory);
         
         resource = _config.getResource("db-memory-scutter");
-        memory = new MemoryFactory().getMemoryFor(resource);
+        memory = new MemoryFactory(resource).getMemory();
         assertNotNull(memory);
-        assertTrue( memory instanceof DatabaseMemory);
+        assertTrue( memory instanceof SharedDatabaseMemory);
 
   }
 
-  /*
-   * Test method for
-   * 'com.ldodds.slug.framework.config.MemoryFactory.createMemory(Resource)'
-   */
-  public void testCreateMemory() 
-  {
-        Resource resource = _config.getResource("file-memory");
-        Memory memory = new MemoryFactory().createMemory(resource);
-        assertNotNull(memory);
-        assertTrue( memory instanceof FileMemory);
-        
-        resource = _config.getResource("db-memory");
-        memory = new MemoryFactory().createMemory(resource);
-        assertNotNull(memory);
-        assertTrue( memory instanceof DatabaseMemory);        
-  }
 
-  /*
-   * Test method for
-   * 'com.ldodds.slug.framework.config.MemoryFactory.createFileMemory(Resource)'
-   */
-  // Have removed getModel since some implementations of memory may not be able to create one
-  /*
-  public void testCreateFileMemoryResource() throws Exception
-  {
-        Resource resource = _config.getResource("file-memory");
-        assertNotNull(resource);
-        assertTrue(resource.hasProperty(RDF.type, CONFIG.Memory));
-    Memory memory = new MemoryFactory().createFileMemory(resource);
-    assertNotNull(memory);
-    assertTrue( memory instanceof FileMemory );
-    assertNull( memory.getModel() );
-    memory.load();
-    assertNotNull( memory.getModel() );
-          
-  }
-  */
- 
-  /*
-   * Test method for
-   * 'com.ldodds.slug.framework.config.MemoryFactory.createFileMemory(String)'
-   */
-
-  // Have removed getModel since some implementations of memory may not be able to create one
-  /*
-  public void testCreateFileMemoryString() throws Exception
-  {
-    File tmpFile = File.createTempFile("memory", "rdf");
-    Memory memory = new MemoryFactory().createFileMemory(tmpFile.getAbsolutePath());
-    assertNotNull(memory);
-    assertTrue( memory instanceof FileMemory );
-    assertNull( memory.getModel() );
-    memory.load();
-    assertNotNull( memory.getModel() );
-    assertEquals( 0L,  memory.getModel().size() );    
-  }
-*/
-  /*
-   * Test method for
-   * 'com.ldodds.slug.framework.config.MemoryFactory.createTemporaryFileMemory()'
-   */
-  
-  // Have removed getModel since some implementations of memory may not be able to create one
-  /*
-  public void testCreateTemporaryFileMemory() throws Exception
-  {
-    Memory memory = new MemoryFactory().createTemporaryFileMemory();
-    assertNotNull(memory);
-    assertTrue( memory instanceof FileMemory );
-    assertNull( memory.getModel() );
-    memory.load();
-    assertNotNull( memory.getModel() );
-  }
-  */
-  /*
-   * Test method for
-   * 'com.ldodds.slug.framework.config.MemoryFactory.createDatabaseMemory(Resource)'
-   */
-  public void ignored_testCreateDatabaseMemoryResource() throws Exception
-  {
-        Resource resource = _config.getResource("db-memory");
-        assertNotNull(resource);
-        assertTrue(resource.hasProperty(RDF.type, CONFIG.DatabaseMemory));
-        Memory memory = new MemoryFactory().createDatabaseMemory(resource);
-        assertNotNull(memory);
-        assertTrue( memory instanceof DatabaseMemory );
-        //assertNull( memory.getModel() );
-        try
-        {
-            memory.load();
-        } catch (DoesNotExistException e)
-        {
-            //fine, at least we know its opened the db connection
-        }
-  }
-
-  /*
-   * Test method for
-   * 'com.ldodds.slug.framework.config.MemoryFactory.createDatabaseMemory(String,
-   * String, String, String, String, String)'
-   */
-  public void testCreateDatabaseMemoryStringStringStringStringStringString() 
-    {
-
-  }
 
 }
