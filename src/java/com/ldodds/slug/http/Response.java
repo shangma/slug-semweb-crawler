@@ -41,6 +41,10 @@ public class Response extends ResultImpl
     
     public String getContentType() {
     	List<String> contentTypes = _responseHeaders.get("Content-Type");
+    	//HACK
+    	if (contentTypes == null) {
+    		contentTypes = _responseHeaders.get("content-type");
+    	}
     	String contentType = null;
     	if (contentTypes != null && !contentTypes.isEmpty()) {
     		contentType = contentTypes.get(0);
@@ -50,6 +54,9 @@ public class Response extends ResultImpl
     
     public String getContentTypeWithoutCharset() {
     	String contentType = getContentType();
+    	if (contentType == null) {
+    		return null;
+    	}
     	if (contentType.indexOf(";") == -1) {
     		return contentType;
     	}
