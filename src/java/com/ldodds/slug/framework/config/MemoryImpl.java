@@ -24,25 +24,17 @@ import com.ldodds.slug.vocabulary.SCUTTERVOCAB;
  * Default implementation of the Memory interface.
  * @author Leigh Dodds
  */
-public abstract class MemoryImpl implements Memory 
+public abstract class MemoryImpl extends AbstractMemoryImpl 
 {
-
-  protected Model _model;
-  protected Logger _logger;
   
   public MemoryImpl() {
     _logger = Logger.getLogger(getClass().getPackage().getName());
   }
   
-  public Model getModel() 
-  {
-    return _model;
-  }
-
   public Resource getRepresentation(URL url) 
   {
-        Statement s = null;
         _model.enterCriticalSection(Lock.READ);
+        Statement s = null;        
         try
         {
         StmtIterator iter = _model.listStatements(null, SCUTTERVOCAB.source, 
@@ -73,6 +65,9 @@ public abstract class MemoryImpl implements Memory
     public Resource getOrCreateRepresentation(URL url, URL origin) 
     {        
         Resource rep = getOrCreateRepresentation(url);
+        if (rep == null) {
+        	return null;
+        }
         _model.enterCriticalSection(Lock.WRITE);
         try
         {
@@ -90,23 +85,7 @@ public abstract class MemoryImpl implements Memory
         _model.enterCriticalSection(Lock.READ);
         try
         {
-            if (rep.hasProperty(SCUTTERVOCAB.latestFetch))
-            {
-                Resource latest = (Resource)rep.getProperty(SCUTTERVOCAB.latestFetch).getObject();
-                if (latest.hasProperty(DC.date))
-                {
-                    Date last = DateUtils.getDate(latest.getProperty(DC.date).getObject().toString());
-                    if (last == null || last.before( date ) )
-                    {
-                        return true;                                                   
-                    }
-                }
-            }
-            else
-            {
-                return true;                   
-            }
-            return false;
+        	return super.canBeFetched(rep, date);
         } finally
         {
             _model.leaveCriticalSection();
@@ -118,12 +97,7 @@ public abstract class MemoryImpl implements Memory
         _model.enterCriticalSection(Lock.WRITE);
         try
         {
-            if (representation.hasProperty(SCUTTERVOCAB.latestFetch))
-            {
-                Resource fetch = (Resource)representation.getProperty(SCUTTERVOCAB.latestFetch).getObject();
-                //FIXME
-                fetch.addProperty(SCUTTERVOCAB.rawTripleCount, size + "" );
-            }
+        	super.addRawTripleCount(representation, size);
         } finally
         {
             _model.leaveCriticalSection();
@@ -146,25 +120,14 @@ public abstract class MemoryImpl implements Memory
   
   public Resource makeFetch(Resource representation) 
   {
-        _model.enterCriticalSection(Lock.WRITE);
-        Resource fetch = _model.createResource(SCUTTERVOCAB.Fetch);        
+        _model.enterCriticalSection(Lock.WRITE);        
         try
         {
-        fetch.addProperty(DC.date, 
-            _model.createTypedLiteral( DateUtils.getNow(), XSDDatatype.XSDdateTime ) );
-            
-        representation.addProperty(SCUTTERVOCAB.fetch, fetch);
-        
-        if (representation.hasProperty(SCUTTERVOCAB.latestFetch))
-        {
-          representation.removeAll(SCUTTERVOCAB.latestFetch);
-        }
-        representation.addProperty(SCUTTERVOCAB.latestFetch, fetch);
+        	return super.makeFetch(representation);
         } finally
         {
             _model.leaveCriticalSection();
         }
-    return fetch;
   }
 
   public void annotateFetch(Resource fetch, int code, Map<String,List<String>> headers) 
@@ -172,102 +135,45 @@ public abstract class MemoryImpl implements Memory
         _model.enterCriticalSection(Lock.WRITE);
         try
         {
-        fetch.addProperty(SCUTTERVOCAB.status, code + "");
-        if (headers.containsKey("Content-Type"))
-        {
-          List<String> values = (List<String>)headers.get("Content-Type");
-          fetch.addProperty(SCUTTERVOCAB.contentType, values.get(0) );      
-        }
-        if (headers.containsKey("Last-Modified"))
-        {
-        	List<String> values = (List<String>)headers.get("Last-Modified");
-          fetch.addProperty(SCUTTERVOCAB.lastModified, values.get(0) );
-        }
-        if (headers.containsKey("ETag"))
-        {
-        	List<String> values = (List<String>)headers.get("ETag");
-          fetch.addProperty(SCUTTERVOCAB.etag, values.get(0) );      
-        }
+        	super.annotateFetch(fetch, code, headers);
         } finally
         {
            _model.leaveCriticalSection(); 
         }
   }
 
-  public Resource makeReasonAndSkip(Resource representation, String msg) 
+  public void makeReasonAndSkip(Resource representation, String msg) 
     {    
         _model.enterCriticalSection(Lock.WRITE);
-        Resource reason = _model.createResource(SCUTTERVOCAB.Reason);
         try
         {
-        reason.addProperty(DC.description, msg);
-        reason.addProperty(DC.date, 
-            _model.createTypedLiteral( DateUtils.getNow(), XSDDatatype.XSDdateTime ) );       
-        representation.addProperty(SCUTTERVOCAB.skip, reason);
+        	super.makeReasonAndSkip(representation, msg);
         } finally {
             _model.leaveCriticalSection();
         }
-        return reason;
   }
 
-  public Resource makeReasonAndError(Resource fetch, String msg) 
+  public void makeReasonAndError(Resource fetch, String msg) 
     {        
         _model.enterCriticalSection(Lock.WRITE);
-        Resource reason = _model.createResource(SCUTTERVOCAB.Reason);
         try
         {
-        reason.addProperty(DC.description, msg);
-        reason.addProperty(DC.date, 
-            _model.createTypedLiteral( DateUtils.getNow(), XSDDatatype.XSDdateTime ) );       
-        
-        fetch.addProperty(SCUTTERVOCAB.error, reason);
+        	super.makeReasonAndError(fetch, msg);
         } finally
         {
             _model.leaveCriticalSection();
         }
-    return reason;
   }
 
-  public Resource makeReasonAndError(Resource fetch, Exception e) 
-  {
-    return makeReasonAndError(fetch, e.getClass().getName() + " " + e.getMessage());  
-  }
 
 
   public void addLocalCopy(Resource representation, File localCopy) {
 	  _model.enterCriticalSection(Lock.WRITE);
 	  try {
-		// just in case
-		if (representation.hasProperty(SCUTTERVOCAB.localCopy)
-				&& !localCopy.toString().equals(
-						representation.getProperty(SCUTTERVOCAB.localCopy)
-								.getObject().toString())) {
-
-			representation.removeAll(SCUTTERVOCAB.localCopy);
-		}
-
-		representation
-				.addProperty(SCUTTERVOCAB.localCopy, localCopy.toString());
+		  super.addLocalCopy(representation, localCopy);
 	  } finally {
 		  _model.leaveCriticalSection();
 	  }
 	}
   
-  public ResIterator getAllRepresentations() {
-    return _model.listSubjectsWithProperty(RDF.type, SCUTTERVOCAB.Representation);      
-  }
-
-  public void store(Resource resource, StringBuffer content, URL requestURL) throws Exception {
-    _model.begin();
-    try {
-      _model.read( new StringReader(content.toString()), "");
-      _model.commit();
-      _logger.log(Level.FINEST, "Written " + requestURL + " to model, size= " + _model.size());      
-    } catch (Exception e)
-    {
-      _logger.log(Level.SEVERE, "Unable to store response from " + requestURL, e);
-      _model.abort();
-    }
-  } 
-
 }
