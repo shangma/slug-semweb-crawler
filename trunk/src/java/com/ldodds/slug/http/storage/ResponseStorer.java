@@ -39,7 +39,7 @@ public class ResponseStorer extends AbstractResponseStorer
 	{
 		super();	    
 		storer = new FileStorer( cache );
-		getLogger().log(Level.INFO, "Cache directory:", cache);
+		getLogger().log(Level.CONFIG, "Cache directory:", cache);
 	}
 	
 	void store(Resource representation, Response response) throws Exception
