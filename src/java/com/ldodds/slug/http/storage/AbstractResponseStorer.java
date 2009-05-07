@@ -27,10 +27,8 @@ public abstract class AbstractResponseStorer extends ConsumerImpl
 			Response response = (Response)result;
 			Resource representation =
 				getMemory().getRepresentation( response.getRequestURL() );
-			if (representation == null)
-			{
-				return;
-			}
+
+			getLogger().finest("Storing response for " + workItem.getId());
 			//TODO support filtering before call to store, e.g. based on the response type.
 			store(representation, response);
 			
