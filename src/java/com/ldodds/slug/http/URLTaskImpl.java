@@ -32,7 +32,7 @@ public class URLTaskImpl implements URLTask {
 		return _url;
 	}
 
-	public String getName()
+	public String getId()
 	{
 		return _url.toString();
 	}
@@ -49,14 +49,14 @@ public class URLTaskImpl implements URLTask {
     
 	public String toString()
 	{
-		return "[" + this.getName() + "]" + _url.toString() + ", depth=" + _depth;
+		return "[" + this.getId() + "]" + _url.toString() + ", depth=" + _depth;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof URLTask) {
 			URLTask other = (URLTask)obj;
-			return (other.getName().equals( this.getName() ) && 
+			return (other.getId().equals( this.getId() ) && 
 					other.getURL().equals( this.getURL() ) && 
 					other.getDepth() == this.getDepth() );
 		}
