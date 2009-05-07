@@ -27,10 +27,6 @@ public class ModelStoringConsumer extends ModelDependentConsumer {
 		Response response = (Response)result;
 		Resource representation =
 			getMemory().getRepresentation( response.getRequestURL() );
-		if (representation == null)
-		{
-			return;
-		}
 		
 		//TODO support other format outputs via configuration
 		DataSource source = new ModelDataSource(model, "N-TRIPLE");
