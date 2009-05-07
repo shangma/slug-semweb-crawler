@@ -1,7 +1,5 @@
 package com.ldodds.slug.framework.config;
 
-import java.io.*;
-
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.ldodds.slug.vocabulary.CONFIG;
@@ -14,75 +12,73 @@ import com.ldodds.slug.vocabulary.CONFIG;
  */
 public class MemoryFactory 
 {
-  public Memory getMemoryFor(Resource forResource) {
-    if (!forResource.hasProperty(CONFIG.hasMemory)) {
-      // TODO: return a NullMemory?
-      return null;
+  private Memory memory;
+  private Resource forResource;
+  
+  public MemoryFactory(Resource forResource)  {
+	this.forResource = forResource;  
+  }
+  
+  public Memory getMemory() {
+    if ( !forResource.hasProperty(CONFIG.hasMemory) ) {    
+      return new NullMemory();
     }
     
     return createMemory( forResource.getProperty(CONFIG.hasMemory).getResource() );
   }
   
-  public Memory createMemory(Resource memory)
+  private Memory createMemory(Resource resource)
   {
-    if (!memory.hasProperty(RDF.type, CONFIG.Memory)) {
-      // TODO: return a NullMemory?
-      return null;
+    if (!resource.hasProperty(RDF.type, CONFIG.Memory)) {
+      return new NullMemory();
     }
-    if (memory.hasProperty(RDF.type, CONFIG.FileMemory))  {
-      return createFileMemory(memory);
+    if (resource.hasProperty(RDF.type, CONFIG.FileMemory))  {
+      if (memory == null) {
+    	  memory = createFileMemory(resource);
+      }       
+      return memory;
     }
-    if (memory.hasProperty(RDF.type, CONFIG.DatabaseMemory)) {
-      return createDatabaseMemory(memory);
+    if (resource.hasProperty(RDF.type, CONFIG.DatabaseMemory)) {
+      if (memory == null) {    	  
+    	  memory = createDatabaseMemory(resource);
+      }
+      return memory;
     }
     
-    // TODO: return a NullMemory?
-    return null; 
+    return new NullMemory(); 
   }
   
-  public Memory createFileMemory(Resource memory)
+  private Memory createFileMemory(Resource resource)
   {
-    if (memory.hasProperty(CONFIG.file))
+    if (resource.hasProperty(CONFIG.file))
     {
       return createFileMemory(
-          memory.getProperty(CONFIG.file).getString());
+          resource.getProperty(CONFIG.file).getString());
     }
     return null;
   }
   
-  public Memory createFileMemory(String fileName)
+  private Memory createFileMemory(String fileName)
   {
     return new FileMemory(fileName);
   }
-  public Memory createTemporaryFileMemory() throws IOException
+    
+  private Memory createDatabaseMemory(Resource resource)
   {
-    File temp = File.createTempFile("memory", "rdf");
-    return createFileMemory(temp.getAbsolutePath());
-  }
-  
-  public Memory createDatabaseMemory(Resource memory)
-  {
-    if (memory.hasProperty(RDF.type, CONFIG.DatabaseMemory))
+    if (resource.hasProperty(RDF.type, CONFIG.DatabaseMemory))
     {
       //TODO make this more robust
-      return new DatabaseMemory
+      return new SharedDatabaseMemory
           (
-        memory.getProperty(CONFIG.user).getString(),
-        memory.getProperty(CONFIG.pass).getString(),
-        memory.getProperty(CONFIG.modelURI).getResource().getURI(),
-        memory.getProperty(CONFIG.dbURL).getString(),
-        memory.getProperty(CONFIG.dbName).getString(),
-        memory.getProperty(CONFIG.driver).getString()
+        resource.getProperty(CONFIG.user).getString(),
+        resource.getProperty(CONFIG.pass).getString(),
+        resource.getProperty(CONFIG.modelURI).getResource().getURI(),
+        resource.getProperty(CONFIG.dbURL).getString(),
+        resource.getProperty(CONFIG.dbName).getString(),
+        resource.getProperty(CONFIG.driver).getString()
           );
     }
     return null;
   }
   
-  public Memory createDatabaseMemory(String user, String pass, 
-      String modelURI, String dbURL, String dbName, 
-      String driver)
-  {
-    return new DatabaseMemory(user, pass, modelURI, dbURL, 
-        dbName, driver);        
-  }
 }
