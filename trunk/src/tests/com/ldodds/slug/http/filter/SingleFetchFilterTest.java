@@ -1,5 +1,7 @@
 package com.ldodds.slug.http.filter;
 
+import java.net.URL;
+
 import com.ldodds.slug.http.URLTaskImpl;
 import com.ldodds.slug.http.filter.DepthFilter;
 
@@ -25,14 +27,14 @@ public class SingleFetchFilterTest extends TestCase {
 
 	public void testAllowed() throws Exception
 	{
-		URLTaskImpl task = new URLTaskImpl(null);
+		URLTaskImpl task = new URLTaskImpl(new URL("http://www.example.org"));
 		DepthFilter filter = new DepthFilter(3);
 		assertTrue( filter.accept(task));
 	}
 	
 	public void testNotAllowed() throws Exception
 	{
-		URLTaskImpl task = new URLTaskImpl(null, 3);
+		URLTaskImpl task = new URLTaskImpl(new URL("http://www.example.org"), 3);
 		DepthFilter filter = new DepthFilter(2);
 		assertTrue( !filter.accept(task) );
 	}
