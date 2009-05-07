@@ -55,15 +55,18 @@ public class RegexResourceScanner extends ResourceScanner {
 		
 		if ( self.hasProperty(CONFIG.filter) ) {
     		String regex = self.getProperty(CONFIG.filter).getString();
+    		getLogger().config("Scan regex: " + regex);
     		acceptance = Pattern.compile(regex);
 		}
 
 		if ( self.hasProperty(CONFIG.replacementRegex) ) {
 			replacementRegex = self.getProperty(CONFIG.replacementRegex).getString();
+			getLogger().config("Replacement regex: " + replacementRegex);
 		}
 		
 		if ( self.hasProperty(CONFIG.replacementValue) ) {
 			replacementValue = self.getProperty(CONFIG.replacementValue).getString();
+			getLogger().config("Replacement value: " + replacementValue);
 		}
 		return super.doConfig(self);
 	}
