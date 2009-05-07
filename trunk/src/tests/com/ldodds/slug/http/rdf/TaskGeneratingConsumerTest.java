@@ -9,6 +9,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.ldodds.slug.framework.Controller;
+import com.ldodds.slug.framework.Task;
 import com.ldodds.slug.framework.config.Memory;
 import com.ldodds.slug.http.URLTask;
 import com.ldodds.slug.http.URLTaskImpl;
@@ -58,11 +59,14 @@ public class TaskGeneratingConsumerTest extends TestCase {
 		};
 		consumer = new TaskGeneratingConsumer(scanner);
 		
-		Controller controller = org.easymock.classextension.EasyMock.createMock(Controller.class);
+		Controller controller = org.easymock.classextension.EasyMock.createMock(Controller.class);		
 		org.easymock.classextension.EasyMock.checkOrder(controller, false);
 		
 		org.easymock.classextension.EasyMock.expect( controller.getStarted() ).andReturn( null ).times(3);
-
+		org.easymock.classextension.EasyMock.expect( controller.addWorkItem( (Task)anyObject() ) ).andReturn(true).anyTimes();
+		
+		org.easymock.classextension.EasyMock.replay(controller);
+		
 		controller.addWorkItem( new URLTaskImpl(first, 1) ) ;
 		controller.addWorkItem( new URLTaskImpl(second, 1) );
 		controller.addWorkItem( new URLTaskImpl(third, 1) );
@@ -78,7 +82,6 @@ public class TaskGeneratingConsumerTest extends TestCase {
 		
 		consumer.setMemory(memory);
 		
-		org.easymock.classextension.EasyMock.replay(controller);
 		replay(memory);
 		URLTask task = new URLTaskImpl( origin );		
 		consumer.findWorkItems(task, ModelFactory.createDefaultModel() );
