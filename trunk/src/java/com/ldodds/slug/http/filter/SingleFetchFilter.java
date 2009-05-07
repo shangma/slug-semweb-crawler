@@ -16,6 +16,7 @@ import com.ldodds.slug.http.rdf.RDFParsingConsumer;
  * the crawl started.
  * 
  * @author ldodds
+ * @deprecated behaviour has been rolled into the core Controller class
  */
 public class SingleFetchFilter extends URLTaskFilter
 {
@@ -23,7 +24,7 @@ public class SingleFetchFilter extends URLTaskFilter
     
     public SingleFetchFilter()
     {
-        _visited = new HashSet<URL>(20);        
+        _visited = new HashSet<URL>(100);        
     }
     
     protected boolean acceptURL(URLTask task)
@@ -31,6 +32,7 @@ public class SingleFetchFilter extends URLTaskFilter
         URL url = task.getURL();
         if (_visited.contains(url))
         {
+        	logRejection(task, "visited");
             return false;
         }
         _visited.add(url);
