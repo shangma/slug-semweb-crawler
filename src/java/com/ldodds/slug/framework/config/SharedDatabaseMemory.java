@@ -7,11 +7,13 @@ import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.shared.DoesNotExistException;
 
 /**
- * Implementation of the Memory interface that stores data in a database
+ * Implementation of the Memory interface that stores data in a database. This implementation is intended 
+ * for use where multiple threads are accessing a single shared memory held in a database, i.e. all 
+ * accesses to the data are funnelled through read/write locks to the underlying Model.
  * 
  * @author ldodds
  */
-class DatabaseMemory extends MemoryImpl 
+class SharedDatabaseMemory extends MemoryImpl 
 {
   private String _user;
   private String _pass;
@@ -20,7 +22,7 @@ class DatabaseMemory extends MemoryImpl
   private String _dbName;
   private String _driver;
   
-  public DatabaseMemory(String user, String pass, 
+  public SharedDatabaseMemory(String user, String pass, 
       String modelURI, String dbURL, String dbName, 
       String driver) 
   {
@@ -32,13 +34,17 @@ class DatabaseMemory extends MemoryImpl
     _driver = driver;
   }
 
-  public Model load() throws Exception 
+  public void load() 
   {
     if (_model != null)
     {
-      return _model;
+      return;
     }
-    Class.forName(_driver);
+    try {
+		Class.forName(_driver);
+	} catch (ClassNotFoundException e) {
+		throw new RuntimeException(e);
+	}
     DBConnection dbConnection = 
       new DBConnection(_dbURL, _user, _pass, _dbName);
     
@@ -50,10 +56,10 @@ class DatabaseMemory extends MemoryImpl
       _model = ModelRDB.createModel(dbConnection, _modelURI);
     }
 	_logger.log(Level.INFO, "Memory Loaded");    
-    return _model;
+    return;
   }
 
-  public void save() throws Exception 
+  public void save() 
   {
     _model.close();
 	_logger.log(Level.INFO, "Memory Saved");    
