@@ -22,7 +22,11 @@ public class DepthFilter extends URLTaskFilter
 	
 	protected boolean acceptURL(URLTask task) 
 	{
-		return task.getDepth() < _depth;
+		boolean accept = task.getDepth() < _depth;
+		if (!accept) {
+		  logRejection(task, "depth");
+		}
+		return accept;
 	}
 
 	protected boolean doConfig(Resource self) 
@@ -30,6 +34,7 @@ public class DepthFilter extends URLTaskFilter
 		if (self.hasProperty(CONFIG.depth))
 		{
 			_depth = self.getProperty(CONFIG.depth).getInt();
+			getLogger().config("Crawl depth:" + _depth);
 			return true;
 		}
 		return false;
