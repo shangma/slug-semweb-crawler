@@ -37,14 +37,13 @@ public class RDFParsingConsumer extends AbstractRDFConsumer {
 	 * @return the model to be used in subsequent processing.
 	 */
 	protected Model getModel(URLTask task, Response response, String baseURL) {
-		//FIXME support other formats
-		if ( !"application/rdf+xml".equals( response.getContentTypeWithoutCharset() )  ) {
-			getLogger().log(Level.FINE, "Cannot parse non RDF/XML data:" + response.getContentType());
+		if ( !canProcess(response) ) {
+			getLogger().log(Level.FINE, "Cannot parse response of format: " + response.getContentType());
 			return null;
 		}
 		
 		Model model = ModelFactory.createDefaultModel();
-		RDFReader reader = model.getReader();
+		RDFReader reader = getReader(response, model);
 		
 		configureReader(reader);
 		
@@ -60,6 +59,27 @@ public class RDFParsingConsumer extends AbstractRDFConsumer {
 			return null;
 		}
 		return model;
+	}
+
+	/**
+	 * Can the consumer parse this response?
+	 * 
+	 * @param response
+	 * @return true if this can be parsed, false otherwise
+	 */
+	protected boolean canProcess(Response response) {
+		return "application/rdf+xml".equals( response.getContentTypeWithoutCharset() );
+	}
+	
+	/**
+	 * Return an RDFReader instance suitable for parsing this data. Default implementation 
+	 * just returns an RDF/XML parser
+	 * 
+	 * @param model
+	 * @return
+	 */
+	protected RDFReader getReader(Response response, Model model) {
+		return model.getReader();
 	}
 	
 	/**
