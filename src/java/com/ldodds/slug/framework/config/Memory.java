@@ -21,11 +21,21 @@ import com.hp.hpl.jena.rdf.model.ResIterator;
  */
 public interface Memory 
 {
-  Model load() throws Exception;
-  void save() throws Exception;
-  
+  void load();
+  void save();
+
+  /**
+   * Resource Iterator. May be null if there are no resources
+   * @return may be null
+   */
   ResIterator getAllRepresentations();
   
+  /**
+   * Find the RDF resource (of rdf:type Representation) that has
+   * a scutter:source property of that url 
+   * @param url
+   * @return the representation, or null if it cannot be found
+   */
   Resource getRepresentation(URL url);
   Resource getOrCreateRepresentation(URL url);
   Resource getOrCreateRepresentation(URL url, URL origin);
@@ -33,10 +43,9 @@ public interface Memory
   void addRawTripleCount(Resource representation, long size);
   Resource makeFetch(Resource representation);
   void annotateFetch(Resource fetch, int code, Map<String, List<String>> headers);
-  Resource makeReasonAndSkip(Resource representation, String msg);
-  Resource makeReasonAndError(Resource fetch, String msg);
-  Resource makeReasonAndError(Resource fetch, Exception e);
+  void makeReasonAndSkip(Resource representation, String msg);
+  void makeReasonAndError(Resource fetch, String msg);
+  void makeReasonAndError(Resource fetch, Exception e);
   void addLocalCopy(Resource representation, File localCopy);
-  void store(Resource resource, StringBuffer content, URL requestURL) throws Exception;
 
 }

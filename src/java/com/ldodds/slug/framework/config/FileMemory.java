@@ -23,24 +23,30 @@ class FileMemory extends MemoryImpl
 		_model = null;
 	}
 
-	public Model load() throws Exception
+	public void load()
 	{
+		//FIXME read as ntriples
 		if (_model != null)
 		{
-			return _model;
+			return;
 		}
 		_model = ModelFactory.createDefaultModel();
 		File file = new File(_fileName);
 		if (! (file.length() == 0L))
 		{
-			_model.read( new FileInputStream(_fileName), "" );	
+			try {
+				
+				_model.read( new FileInputStream(_fileName), "" );
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 		}
 		_logger.log(Level.INFO, "Memory Loaded");
-		return _model;
 	}
 
-	public void save() throws Exception 
+	public void save() 
 	{
+		//FIXME write as ntriples
         RDFWriter writer = _model.getWriter("RDF/XML-ABBREV");
         _model.getGraph().getPrefixMapping().setNsPrefix("dc", DC.getURI());
         _model.getGraph().getPrefixMapping().setNsPrefix("scutter", SCUTTERVOCAB.getURI());
@@ -50,8 +56,12 @@ class FileMemory extends MemoryImpl
         
         writer.setProperty("prettyTypes", new Resource[] { SCUTTERVOCAB.Fetch,
                                                            SCUTTERVOCAB.Reason,
-                                                           SCUTTERVOCAB.Representation});       
-        writer.write(_model, new FileOutputStream(_fileName), "");                        
+                                                           SCUTTERVOCAB.Representation});
+        try {
+        	writer.write(_model, new FileOutputStream(_fileName), "");
+        } catch (Exception e) {
+        	throw new RuntimeException(e);
+        }
         
 		_model.close();
 		_logger.log(Level.INFO, "Memory Saved");		
