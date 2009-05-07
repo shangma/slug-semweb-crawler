@@ -47,17 +47,22 @@ public class TaskGeneratingConsumer extends ModelDependentConsumer {
 	protected void findWorkItems(URLTask origin, Model model) {
 		Set<URL> newURLs = findURLs(model, origin.getURL());
 		Iterator<URL> iter = newURLs.iterator();
+		int addedTasks = 0;
 		while (iter.hasNext()) {
 			URL next = iter.next();
 
 			Resource rep = memory.getOrCreateRepresentation(next,
 					origin.getURL());
-
-			if (memory.canBeFetched(rep, controller.getStarted())) {
-				controller.addWorkItem(new URLTaskImpl(origin, next));
+		
+			//TODO: this is now redundant as the Controller will never redo any task in a single run
+			//leaving for now, to allow for additional behaviour to be hooked in
+			if ( memory.canBeFetched(rep, controller.getStarted()) ) {
+				boolean added = controller.addWorkItem(new URLTaskImpl(origin, next));
+				if (added) addedTasks++;
 			}
 
 		}
+		getLogger().fine("QUEUED " + addedTasks + " tasks from " + origin.getURL() );
 	}
 
 	/**
