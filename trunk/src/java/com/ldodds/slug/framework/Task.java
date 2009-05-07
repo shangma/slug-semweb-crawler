@@ -7,5 +7,9 @@ package com.ldodds.slug.framework;
  */
 public interface Task 
 {
-	String getName();
+	/**
+	 * Identifier for the task. Should be unique for this specific task item.
+	 * @return
+	 */
+	String getId();
 }
