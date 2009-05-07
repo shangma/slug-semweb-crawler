@@ -10,7 +10,7 @@ package com.ldodds.slug.framework;
 public interface Monitor
 {
     public void startingTask(Worker worker, Task workItem);
-    public void completedTask(Worker worker, Task workItem);
+    public void completedTask(Worker worker, Task workItem, Result result);
     
     public int getNumberOfActiveWorkers();
     
