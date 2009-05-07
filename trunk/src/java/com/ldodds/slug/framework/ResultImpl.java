@@ -7,15 +7,25 @@ public class ResultImpl implements Result {
 
 	private boolean success;
 	private boolean noop;
-
+	private String msg;
+	
 	private Map<String, Object> context;
 	
 	public ResultImpl(boolean success, boolean noop) {
+		this(success, noop, "");
+	}
+
+	public ResultImpl(boolean success, boolean noop, String msg) {
 		this.success = success;
 		this.noop = noop;
 		context = new HashMap<String,Object>();
+		this.msg = msg;
 	}
-
+	
+	public String getMessage() {
+		return msg;
+	}
+	
 	public void addContext(String url, Object data) {
 		context.put(url, data);
 	}
@@ -36,8 +46,8 @@ public class ResultImpl implements Result {
 		return success;
 	}
 	
-	public static Result failure() {
-		return new ResultImpl(false, true);
+	public static Result failure(String msg) {
+		return new ResultImpl(false, true, msg);
 	}
 	
 	public static Result noop() {
