@@ -13,6 +13,8 @@ public interface Result {
 	Object getContext(String url);
 	void addContext(String url, Object context);	
 	
+	String getMessage();
+	
 	/**
 	 * Was the task successful?
 	 * 
