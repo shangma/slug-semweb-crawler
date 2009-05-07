@@ -12,6 +12,18 @@ import java.util.List;
 public class FilteringController extends Controller {
 
 	private DelegatingTaskFilterImpl _filter;
+
+	/**
+	 * @param workItems
+	 * @param factory
+	 * @param numberOfWorkers
+	 * @param monitor
+	 */
+	public FilteringController(WorkerFactory factory,
+			int numberOfWorkers, Monitor monitor) {
+		super(factory, numberOfWorkers, monitor);
+		_filter = new DelegatingTaskFilterImpl();
+	}
 	
 	/**
 	 * @param workItems
@@ -25,15 +37,16 @@ public class FilteringController extends Controller {
 		_filter = new DelegatingTaskFilterImpl();
 	}
 
-	public synchronized void addWorkItem(Task workItem) 
+	public synchronized boolean addWorkItem(Task workItem) 
 	{
 		if ( _filter.accept(workItem) )
 		{		
-			super.addWorkItem(workItem);
+			return super.addWorkItem(workItem);
 		}
 		else
 		{
 			_logger.finest("Filtered work item: " + workItem);
+			return false;
 		}
 	}
 	
