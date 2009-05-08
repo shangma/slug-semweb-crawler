@@ -208,6 +208,7 @@ public class Scutter implements Runnable
   
   public void stop()
   {
+	logger.info("Stopping scutter");
     if (controller != null)
     {
         controller.stop();
@@ -216,7 +217,7 @@ public class Scutter implements Runnable
   
   public void save() throws Exception
   {
-    logger.finer("Saving memory");
+    logger.info("Saving memory");
     memory.save();
   }
   
@@ -261,7 +262,7 @@ public class Scutter implements Runnable
             {
             public void run()
             {
-                logger.log(Level.INFO, "Scutter manually aborted, stopping run");
+                logger.log(Level.INFO, "Running shutdown hook");
                 scutter.stop();
                 try
                 {
