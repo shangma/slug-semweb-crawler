@@ -3,7 +3,6 @@ package com.ldodds.slug.framework.config;
 import java.util.logging.Level;
 
 import com.hp.hpl.jena.db.*;
-import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.shared.DoesNotExistException;
 
 /**
