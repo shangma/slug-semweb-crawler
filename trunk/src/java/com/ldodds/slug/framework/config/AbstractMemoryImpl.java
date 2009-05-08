@@ -11,10 +11,24 @@ import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
+import com.hp.hpl.jena.shared.Lock;
 import com.hp.hpl.jena.vocabulary.DC;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.ldodds.slug.vocabulary.SCUTTERVOCAB;
 
+/**
+ * Default implementation of the memory interface.
+ * 
+ * Sub-classes should extend this to implement the load/save 
+ * behaviour.
+ * 
+ * This implementation does not use transactions and is not 
+ * intended for multi-threaded use, so care should be taken to 
+ * also supply this behaviour
+ * @author ldodds
+ *
+ */
 public abstract class AbstractMemoryImpl implements Memory {
 
 	protected Model _model;	
@@ -92,21 +106,49 @@ public abstract class AbstractMemoryImpl implements Memory {
 		    return _model.listSubjectsWithProperty(RDF.type, SCUTTERVOCAB.Representation);      
 	}
 
-	public Resource getOrCreateRepresentation(URL url) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	  public Resource getOrCreateRepresentation(URL url) 
+	  {
+	    Resource rep = getRepresentation(url);
+	    if (rep == null)
+	    {
+	      rep = makeRepresentation(url);
+	    }
+	    return rep;
+	  }
+
 
 	public Resource getOrCreateRepresentation(URL url, URL origin) {
-		// TODO Auto-generated method stub
-		return null;
+        Resource rep = getOrCreateRepresentation(url);
+        if (rep == null) {
+        	return null;
+        }
+        _model.add(rep, SCUTTERVOCAB.origin, _model.createResource( origin.toString() ) );
+        return rep;        
 	}
 
 	public Resource getRepresentation(URL url) {
-		// TODO Auto-generated method stub
-		return null;
+        StmtIterator iter = _model.listStatements(null, SCUTTERVOCAB.source, 
+        _model.createResource(url.toString()) );
+        if (!iter.hasNext()) {
+        	return null;  
+        }
+        return iter.nextStatement().getSubject();
 	}
 
+	  private Resource makeRepresentation(URL url)
+	  {
+	    _model.enterCriticalSection(Lock.WRITE);
+	    Resource rep = _model.createResource(SCUTTERVOCAB.Representation);    
+	    try {
+	      _model.add(rep, SCUTTERVOCAB.source, 
+	      _model.createResource(url.toString()) );
+	    } 
+	    finally {
+	      _model.leaveCriticalSection();
+	    }
+	    return rep;
+	  }
+	
 	public Resource makeFetch(Resource representation) {
         Resource fetch = _model.createResource(SCUTTERVOCAB.Fetch);        
 		
