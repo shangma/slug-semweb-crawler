@@ -4,7 +4,7 @@ This page contains some notes on the expected functionality that will be include
 
 Nagging is a good way to get features implemented. If I know someone is using the code, that's good motivation.
 
-=0.3 
+=0.3=
 
   * Number of bug fixes and improvements
   * Allow configuration of the User-Agent header  
@@ -15,7 +15,7 @@ Nagging is a good way to get features implemented. If I know someone is using th
   * Controller now deals with avoiding cycles in a crawl, removing need for a filter to do this
   * Improved logging
 
-=Wishlist
+=Wishlist=
 
 Slug isn't very well behaved. It needs to:
 
