@@ -22,3 +22,23 @@ These scripts accept the following parameters. The majority are required:
 ||-id||Identifier for scutter profile as defined in the above config. file||Yes||
 ||-plan||Path to a "scutter plan". i.e an RDF document identifying the list of initial URLs to be crawled. The distribution includes a simple example, sample-plan.rdf||No, supply this or -freshen, or both||
 ||-freshen||Indicates whether the scutter should add all previously found URLs to its initial crawler plan. Used to "freshen" already discovered data||No, supply this or -plan, or both||
+
+For very large crawls, it may be necessary to allocate more memory to the JVM. This is particularly true if the crawler is using an in-process memory. To do this edit the shell script or batch file to set the JVM heap size using the -Xmx parameter. E.g to allocate 1Gb of memory to the JVM add the following:
+
+{{{
+-Xmx1024m
+}}}
+
+= Stopping the Scutter =
+
+The crawler will automatically stop after it has completed all tasks in its current queue. The log files summarize the number of tasks completed and remaining after every 1000 tasks, so this is the ideal place to monitor the progress of a crawl.
+
+In some cases, e.g. where a crawl is unbounded, it may be necessary to kill the crawler manually.
+
+This can be done by simply hitting Ctrl+C in the command window running the crawler. If the crawler is being run as a background process on a *nix system, then the crawler can be cleanly shutdown using:
+
+{{{
+kill -SIGTERM pid
+}}}
+
+Where "pid" is the process id of the JVM running the crawler.
