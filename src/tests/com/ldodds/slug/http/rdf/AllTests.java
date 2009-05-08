@@ -10,6 +10,7 @@ public class AllTests {
 		//$JUnit-BEGIN$
 		suite.addTestSuite(ModelDependentConsumerTest.class);
 		suite.addTestSuite(TaskGeneratingConsumerTest.class);
+		suite.addTestSuite(FilteringRDFConsumerTest.class);
 		suite.addTestSuite(RDFParsingConsumerTest.class);
 		//$JUnit-END$
 		return suite;
