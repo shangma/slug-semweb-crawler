@@ -7,7 +7,7 @@ Installation is quite straight-forward. All required libraries and code are prov
   # Download the desired release. Ensure that you save the file locally as some users have reported problems opening the file directly in a browser.
   # Unzip the distribution, e.g. in your home directory. You'll end up with a new sub-directory slug containing all code and files.
   # You may want to create a new environment variable $SLUG_HOME or %SLUG_HOME% to refer to the location of the scutter. You'll probably also want to add this directory to your PATH.
-  # Ensure you have Java 1.5 installed, you'll need this to run the scutter
+  # Ensure you have Java 1.6 installed, you'll need this to run the scutter
   # It's also recommended that you install Apache Ant. You'll definitely need this if you want to contribute to the project, locally customise the code, or build it yourself. The provided Ant script ($SLUG_HOME/build.xml) also includes a few helpful tools such as building the javadocs, etc. See the tools documentation for notes on that.
   # That's it, you're ready to configure and run a scutter
 
