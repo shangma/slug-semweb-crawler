@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 
 public class RDFParsingConsumerTest extends TestCase {
 
-	private RDFParsingConsumer consumer;
+	private AbstractRDFConsumer consumer;
 	private Memory memory;
 	private Controller controller;
 	private URLTask task;
@@ -94,7 +94,6 @@ public class RDFParsingConsumerTest extends TestCase {
 		URL url = new URL("http://www.example.org");
 		Resource rep = createMock(Resource.class);
 		memory = createMock(Memory.class);
-		expect( memory.getRepresentation(url) ).andReturn( rep );
 		
 		consumer = new RDFParsingConsumer();		
 		consumer.setMemory(memory);
