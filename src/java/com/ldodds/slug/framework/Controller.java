@@ -165,7 +165,7 @@ public class Controller implements Runnable
     		boolean success = addWorkItem(workItem);
     		if (success) added++;
     	}
-    	_logger.fine("QUEUED "  + added + " tasks " + (source != null ? " from " + source : "") );
+    	_logger.fine("QUEUED "  + added + " tasks" + (source != null ? " from " + source : "") );
     	return added;
     }
     
