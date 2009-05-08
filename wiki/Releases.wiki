@@ -4,28 +4,26 @@ This page contains some notes on the expected functionality that will be include
 
 Nagging is a good way to get features implemented. If I know someone is using the code, that's good motivation.
 
-=alpha-3 "The Behaviour Release"=
+=0.3 
+
+  * Number of bug fixes and improvements
+  * Allow configuration of the User-Agent header  
+  * Expose and capture more statistics while in-progress
+  * Complete rework of how RDF is handled and parsed
+  * Follow more than just rdfs:seeAlso links to find data, by allowing pluggable link discovery
+  * Alter the Consumer components can now pass data downstream using Result context
+  * Controller now deals with avoiding cycles in a crawl, removing need for a filter to do this
+  * Improved logging
+
+=Wishlist
 
 Slug isn't very well behaved. It needs to:
 
   * Support the Robot Exclusion Protocol
-  * Allow configuration of the User-Agent header
   * Implement throttling on a global and per-domain basis
   * Check additional HTTP status codes to "skip" more errors
   * Support white-listing of URLs
-  * Expose and capture more statistics while in-progress
-
-The following additional features will be useful:
-
   * Support Content Negotiation to allow for additional RDF syntaxes
-  * Follow more than just rdfs:seeAlso links to find data, by allowing pluggable link discovery
   * Integrate a smushing utility for managing persistent data
-  * Alter the Consumer components to be structured as a pipeline, enabling pre-processing of incoming content, e.g. to use GRDDL to extract data.
-
-=alpha-4 "For Control Freaks"=
-
-Slug needs to be easier to control. The Monitor component should be made pluggable to allow for a GUI or Web Application to be used to control the Scutter.
-
-=beta-1 "Testing, Testing"=
-
-Concentrate on additional unit and functional testing. Aim to have stabilised APIs, particular around the component model to aim for a stable 1.0 release. 
+  * Ability to retry urls
+  * Support for RDFa and other content manipulation
