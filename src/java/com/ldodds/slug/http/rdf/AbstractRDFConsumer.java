@@ -1,12 +1,16 @@
 package com.ldodds.slug.http.rdf;
 
+import java.io.StringReader;
 import java.util.logging.Level;
 
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.RDFReader;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.ldodds.slug.framework.ConsumerImpl;
 import com.ldodds.slug.framework.Result;
 import com.ldodds.slug.framework.Task;
+import com.ldodds.slug.http.LoggingErrorHandler;
 import com.ldodds.slug.http.Response;
 import com.ldodds.slug.http.URLTask;
 import com.ldodds.slug.vocabulary.SCUTTERVOCAB;
@@ -35,16 +39,17 @@ public abstract class AbstractRDFConsumer extends ConsumerImpl {
 	public void consume(Task workItem, Result result) {
 		URLTask urlWorkItem = (URLTask) workItem;
 		Response response = (Response) result;
-	
+
+		if ( ! canProcess(urlWorkItem, response) ) {
+			getLogger().log(Level.FINE, "Cannot parse response of format: " + response.getContentType());
+			return;
+		}
+		
 		//Find the RDF resource (of rdf:type Representation) that has 
 		//a scutter:source property of that url 
 		Resource representation = getMemory()
 				.getRepresentation(urlWorkItem.getURL());
 		
-		//Now find the source property for that resource, and use that
-		//as our base URL
-		//FIXME: So this is always the same as the workItem url...
-		//String baseURL = representation.getProperty(SCUTTERVOCAB.source).getString();
 		String baseURL = urlWorkItem.getURL().toString();
 		
 		try {
@@ -62,31 +67,35 @@ public abstract class AbstractRDFConsumer extends ConsumerImpl {
 	}
 
 	/**
-	 * Update the Scutter memory with information and/or statistics about the retrieved 
-	 * data. The default implementation simply adds the raw triple count.
-	 *
-	 * Override this method to carry out additional updates
-	 * 
-	 * @param representation the Resource referencing the work item in the Scutter memory
-	 * @param model the parsed response data
-	 */
-	protected void updateMemory(Resource representation, Model model) {
-		memory.addRawTripleCount(representation, model.size());
-	}
-	
-	/**
-	 * Attempt to parse the results of the task as RDF.
-	 * 
-	 * Sub-classes should implement this method to provide the parsing behaviour to generate 
-	 * a Model from the returned data, e.g. based on the media type in the response.
+	 * Attempt to parse the results of the task as RDF. If the Content-Type 
+	 * header in the response is not set, or is not acceptable then 
+	 * the response will not be processed.
 	 * 
 	 * @param task the task that generated the response
 	 * @param response the response
 	 * @param baseURL the base URL
 	 * @return the model to be used in subsequent processing. If null, then no further processing is carried out
 	 */
-	protected abstract Model getModel(URLTask task, Response response, String baseURL);
-	
+	protected Model getModel(URLTask task, Response response, String baseURL) {
+		
+		Model model = ModelFactory.createDefaultModel();
+		RDFReader reader = getReader(response, model);
+		
+		configureReader(reader);
+		
+		LoggingErrorHandler errorHandler = new LoggingErrorHandler(task.getURL()
+				.toString());
+		
+		reader.setErrorHandler(errorHandler);
+		reader.read(model, new StringReader(getContent(response)), baseURL);
+		
+		if ( errorHandler.isError() ) {
+			getLogger().log(Level.SEVERE, "Error processing RDF, not adding Model to context");
+			return null;
+		}
+		return model;
+	}
+
 	/**
 	 * Process the generated RDF model.
 	 * 
@@ -102,6 +111,20 @@ public abstract class AbstractRDFConsumer extends ConsumerImpl {
 		updateMemory(representation, model);
 		addToContext(result, model);
 	}	
+	
+	/**
+	 * Update the Scutter memory with information and/or statistics about the retrieved 
+	 * data. The default implementation simply adds the raw triple count.
+	 *
+	 * Override this method to carry out additional updates
+	 * 
+	 * @param representation the Resource referencing the work item in the Scutter memory
+	 * @param model the parsed response data
+	 */
+	protected void updateMemory(Resource representation, Model model) {
+		memory.addRawTripleCount(representation, model.size());
+	}
+	
 
 	/**
 	 * Adds the provided model as context to the Result object.
@@ -119,5 +142,44 @@ public abstract class AbstractRDFConsumer extends ConsumerImpl {
 	protected String getContextURI() {
 		return RDF_MODEL;
 	}
+
+	/**
+	 * Can be overridden by sub-classes to configure the RDFReader before it is used to 
+	 * parse an RDF/XML document.
+	 *
+	 * The default implementation does nothing.
+	 * 
+	 * @param reader
+	 */
+	protected void configureReader(RDFReader reader) {
+		
+	}
+
+	/**
+	 * Return an RDFReader instance suitable for parsing this data. Default implementation 
+	 * just returns an RDF/XML parser
+	 * 
+	 * @param model
+	 * @return
+	 */
+	protected abstract RDFReader getReader(Response response, Model model);
+
+	/**
+	 * Can the consumer parse this response?
+	 * 
+	 * @param response
+	 * @return true if this can be parsed, false otherwise
+	 */	
+	protected abstract boolean canProcess(URLTask task, Response response);
+	
+	/**
+	 * Get the response body for parsing as RDF/XML.
+	 * 
+	 * Sub-classes can override this method to, e.g. translate the original response.
+	 * 
+	 * @param response the response from the current task
+	 * @return a String containing the RDF/XML data
+	 */
+	protected abstract String getContent(Response response);
 	
 }
