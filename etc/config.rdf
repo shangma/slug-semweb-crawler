@@ -38,7 +38,6 @@ with different worker, memory, consumer and filter configurations.
 	 <!-- configures filter pipeline for controller -->
 	 <slug:filters>
 	   <rdf:Seq>
-	     <rdf:li rdf:resource="single-fetch-filter"/>	     	   
 	     <rdf:li rdf:resource="depth-filter"/>
 	     <rdf:li rdf:resource="regex-filter"/>	     
 	   </rdf:Seq>
@@ -66,7 +65,6 @@ with different worker, memory, consumer and filter configurations.
 	 <!-- alternate filters, using shallow-depth-filter -->
 	 <slug:filters>
 	   <rdf:Seq>
-	     <rdf:li rdf:resource="single-fetch-filter"/>	     	   
 	     <rdf:li rdf:resource="shallow-depth-filter"/>
 	     <rdf:li rdf:resource="regex-filter"/>	     
 	   </rdf:Seq>
@@ -93,7 +91,6 @@ with different worker, memory, consumer and filter configurations.
 	 <!-- alternate filters, using shallow-depth-filter -->
 	 <slug:filters>
 	   <rdf:Seq>
-	     <rdf:li rdf:resource="single-fetch-filter"/>	     	   
 	     <rdf:li rdf:resource="deep-depth-filter"/> 
 	   </rdf:Seq>
 	 </slug:filters> 	 
@@ -123,7 +120,6 @@ with different worker, memory, consumer and filter configurations.
 	 <!-- configures filter pipeline for controller -->
 	 <slug:filters>
 	   <rdf:Seq>
-	     <rdf:li rdf:resource="single-fetch-filter"/>	     	   
 	     <rdf:li rdf:resource="depth-filter"/>
 	     <rdf:li rdf:resource="regex-filter"/>	     
 	   </rdf:Seq>
@@ -155,7 +151,7 @@ with different worker, memory, consumer and filter configurations.
    
      <slug:impl>com.ldodds.slug.http.storage.ResponseStorer</slug:impl>
      <!-- must be a directory, will get created automatically if it doesn't exist -->
-     <slug:cache>/home/ldodds/data/bbc/rdf</slug:cache>
+     <slug:cache>/tmp/slug/rdf</slug:cache>
    </slug:Consumer>
 
    <slug:Consumer rdf:about="persistent-storer">
@@ -214,13 +210,8 @@ by a consumer that generates RDF</dc:description>
 	 <slug:filter>livejournal</slug:filter>
    </slug:Filter>
 
-   <slug:Filter rdf:about="single-fetch-filter">
-     <dc:title>Avoid Loops</dc:title>
-	 <slug:impl>com.ldodds.slug.http.filter.SingleFetchFilter</slug:impl>
-   </slug:Filter>         
-   
    <slug:Memory rdf:about="memory">
-     <slug:file>/home/ldodds/data/bbc/slug/memory.rdf</slug:file>
+     <slug:file>/tmp/slug/memory.rdf</slug:file>
    </slug:Memory>
 
    <slug:Memory rdf:about="db-memory">
