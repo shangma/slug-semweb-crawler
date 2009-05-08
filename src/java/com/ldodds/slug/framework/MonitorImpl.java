@@ -49,7 +49,7 @@ public class MonitorImpl implements Monitor
 		
 		String logMessage = status + ": " + workItem.getId();
 		if (result.getMessage() != null && !"".equals( result.getMessage() ) ) {
-			logMessage = logMessage + "(" + result.getMessage() + ")";
+			logMessage = logMessage + " (" + result.getMessage() + ")";
 		}
 		logMessage = logMessage + " [" + worker.getName() + "]";
 		_logger.fine( logMessage  );
