@@ -28,6 +28,8 @@ public class CONFIG {
     
     public static final Property filter = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/filter" );
     
+    public static final Property transform = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/transform" );    
+    
     public static final Property driver = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/driver" );
     
     public static final Property hasMemory = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/hasMemory" );

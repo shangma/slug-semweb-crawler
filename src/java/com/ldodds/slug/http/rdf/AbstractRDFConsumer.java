@@ -87,7 +87,13 @@ public abstract class AbstractRDFConsumer extends ConsumerImpl {
 				.toString());
 		
 		reader.setErrorHandler(errorHandler);
-		reader.read(model, new StringReader(getContent(response)), baseURL);
+		String content = getContent(response);
+		
+		if (content == null || "".equals(content)) {
+			return null;
+		}
+			
+		reader.read(model, new StringReader(content), baseURL);
 		
 		if ( errorHandler.isError() ) {
 			getLogger().log(Level.SEVERE, "Error processing RDF, not adding Model to context");
@@ -179,7 +185,9 @@ public abstract class AbstractRDFConsumer extends ConsumerImpl {
 	 * 
 	 * @param response the response from the current task
 	 * @return a String containing the RDF/XML data
-	 */
-	protected abstract String getContent(Response response);
+	 */ 
+	protected String getContent(Response response) {
+		return response.getContent().toString();
+	}
 	
 }
