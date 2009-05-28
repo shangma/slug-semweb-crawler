@@ -35,7 +35,7 @@ public class URLRetrievalWorker extends ProducerWorkerImpl
 			Resource rep = _memory.getOrCreateRepresentation( urlTask.getURL() );
 			if (rep != null && rep.hasProperty(SCUTTERVOCAB.skip)) {
 				_logger.finer("SKIP " + workItem.getId());
-				return null;                    
+				return ResultImpl.noop();                    
 			}
 			fetch = _memory.makeFetch(rep);
 			
