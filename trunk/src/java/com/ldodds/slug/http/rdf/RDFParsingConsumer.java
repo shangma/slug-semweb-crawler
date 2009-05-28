@@ -14,11 +14,7 @@ import com.ldodds.slug.http.URLTask;
  * TODO: move out behaviour that can rely on context
  */
 public class RDFParsingConsumer extends AbstractRDFConsumer {
-	
-	@Override
-	protected String getContent(Response response) {
-		return response.getContent().toString();
-	}
+
 
 	@Override
 	protected boolean canProcess(URLTask task, Response response) {
