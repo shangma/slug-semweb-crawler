@@ -60,10 +60,12 @@ public abstract class ProducerWorkerImpl extends WorkerImpl implements Producer
 	        {
 				Result result = doTask(_workItem);
 				//TODO capture no-ops and failures
-				if (_consumer != null && result != null && result.isSuccess() )
+				if (_consumer != null && result != null )
 				{
-					_logger.finest("Consuming results of successful task: " + _workItem.getId());
-					_consumer.consume(_workItem, result);
+					if ( result.isSuccess() && !result.isNoOp() ) {
+						_logger.finest("Consuming results of successful task: " + _workItem.getId());
+						_consumer.consume(_workItem, result);
+					}
 				}
 				//TODO note error?
 				_controller.completedTask(this, _workItem, result);
