@@ -127,7 +127,10 @@ public class URLRetrievalWorker extends ProducerWorkerImpl
 	private void configureConnection(URLTask task, Resource rep, HttpURLConnection connection)
 	{
 		connection.setInstanceFollowRedirects(true);
-
+		//set timeouts
+		connection.setReadTimeout(30);
+		connection.setConnectTimeout(30);
+		
 		boolean conditionalGet = false;
 		
 		if (rep != null && rep.hasProperty(SCUTTERVOCAB.latestFetch))
