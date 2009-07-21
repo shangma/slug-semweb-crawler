@@ -128,8 +128,8 @@ public class URLRetrievalWorker extends ProducerWorkerImpl
 	{
 		connection.setInstanceFollowRedirects(true);
 		//set timeouts
-		connection.setReadTimeout(30);
-		connection.setConnectTimeout(30);
+		connection.setReadTimeout(30000);
+		connection.setConnectTimeout(30000);
 		
 		boolean conditionalGet = false;
 		
