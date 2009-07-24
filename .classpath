@@ -24,5 +24,6 @@
 	<classpathentry kind="lib" path="lib/easymock/easymockclassextension.jar"/>
 	<classpathentry kind="lib" path="lib/easymock/cglib-nodep-2.2_beta1.jar"/>
 	<classpathentry kind="lib" path="lib/saxon9.jar"/>
+	<classpathentry kind="lib" path="lib/nekohtml.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
