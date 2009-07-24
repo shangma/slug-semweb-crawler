@@ -1,6 +1,7 @@
 package com.ldodds.slug.http.rdf;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import java.net.URL;
@@ -62,71 +63,15 @@ public class TaskGeneratingConsumerTest extends TestCase {
 		Controller controller = org.easymock.classextension.EasyMock.createMock(Controller.class);		
 		org.easymock.classextension.EasyMock.checkOrder(controller, false);
 		
-		org.easymock.classextension.EasyMock.expect( controller.getStarted() ).andReturn( null ).times(3);
-		org.easymock.classextension.EasyMock.expect( controller.addWorkItem( (Task)anyObject() ) ).andReturn(true).anyTimes();
+		org.easymock.classextension.EasyMock.expect( controller.addWorkItems( (List<Task>)anyObject(), (String)anyObject() ) ).andReturn(3);
 		
 		org.easymock.classextension.EasyMock.replay(controller);
-		
-		controller.addWorkItem( new URLTaskImpl(first, 1) ) ;
-		controller.addWorkItem( new URLTaskImpl(second, 1) );
-		controller.addWorkItem( new URLTaskImpl(third, 1) );
-		
+				
 		consumer.setController( controller );
 		
-		Memory memory = createMock(Memory.class);
-		expect( memory.getOrCreateRepresentation(first, origin) ).andReturn(null);
-		expect( memory.getOrCreateRepresentation(second, origin) ).andReturn(null);
-		expect( memory.getOrCreateRepresentation(third, origin) ).andReturn(null);
-		
-		expect( memory.canBeFetched(null, null)).andReturn(Boolean.TRUE).times(3);
-		
+		Memory memory = createMock(Memory.class);		
 		consumer.setMemory(memory);
 		
-		replay(memory);
-		URLTask task = new URLTaskImpl( origin );		
-		consumer.findWorkItems(task, ModelFactory.createDefaultModel() );
-		verify(memory);
-		org.easymock.classextension.EasyMock.verify(controller);
-	}
-
-	public void testFindWorkItemsSkipsIfCannotBeFetched() throws Exception {
-		
-		URL origin = new URL("http://www.example.com/a/b/c");
-		URL first = new URL("http://www.example.org/a.rdf" );
-		URL second = new URL("http://www.example.org/b.rdf" );
-		URL third = new URL("http://www.example.org/c.rdf" );
-		
-		final Set<URL> urls = new HashSet<URL>();
-		urls.add( first );
-		urls.add( second );
-		urls.add( third );
-		
-		Scanner scanner = new Scanner() {
-
-			public Set<java.net.URL> findURLs(Model toScan, java.net.URL origin) {
-				return urls;
-			}
-			
-		};
-		consumer = new TaskGeneratingConsumer(scanner);
-		
-		Controller controller = org.easymock.classextension.EasyMock.createMock(Controller.class);
-		org.easymock.classextension.EasyMock.checkOrder(controller, false);
-		
-		org.easymock.classextension.EasyMock.expect( controller.getStarted() ).andReturn( null ).times(3);
-		
-		consumer.setController( controller );
-		
-		Memory memory = createMock(Memory.class);
-		expect( memory.getOrCreateRepresentation(first, origin) ).andReturn(null);
-		expect( memory.getOrCreateRepresentation(second, origin) ).andReturn(null);
-		expect( memory.getOrCreateRepresentation(third, origin) ).andReturn(null);
-		
-		expect( memory.canBeFetched(null, null)).andReturn(Boolean.FALSE).times(3);
-		
-		consumer.setMemory(memory);
-		
-		org.easymock.classextension.EasyMock.replay(controller);
 		replay(memory);
 		URLTask task = new URLTaskImpl( origin );		
 		consumer.findWorkItems(task, ModelFactory.createDefaultModel() );
