@@ -108,7 +108,8 @@ public class TransformingRDFConsumerTest extends TestCase {
 		Response response = createResponse("http://www.example.org", "text/html", "invalid.xml");
 
 		String content = consumer.getContent(response);
-		assertNull( content );
+		//not null as it'll be an empty document
+		assertNotNull( content );
 	}
 
 	
@@ -126,6 +127,33 @@ public class TransformingRDFConsumerTest extends TestCase {
 		assertTrue( !data.isEmpty() );
 	}	
 
+	public void testGetModelWithTidyup() throws Exception {
+		Resource self = createConfiguration("RDFa2RDFXML.xsl");
+		consumer.configure(self);
+		
+		Response response = createResponse("http://www.example.org", "text/html", "careers.htm");
+
+		URL url = new URL("http://www.example.org");
+		URLTask task = new URLTaskImpl( url );
+		
+		Model data = consumer.getModel( task , response, "http://www.example.org");
+		assertNotNull( data );
+		assertTrue( !data.isEmpty() );
+		//data.write(System.out);
+		
+		response = createResponse("http://www.example.org", "text/html", "careers-invalid.htm");
+		Model data2 = consumer.getModel( task , response, "http://www.example.org");
+		assertNotNull( data2 );
+		assertTrue( !data2.isEmpty() );
+		//data2.write(System.out);
+		//we don't assert direct equality here as in all likelihood the data may end up being different, e.g. the DOM structure
+		//may have been tidied, meaning that some literal values are lost
+		//assertEquals( data, data2 );
+		//instead hope we get the same amount of data
+		assertTrue( data.size() == data2.size() );
+	}	
+
+	
 	public void testGetModelWithInvalidXML() throws Exception {
 		Resource self = createConfiguration("RDFa2RDFXML.xsl");
 		consumer.configure(self);
@@ -136,7 +164,7 @@ public class TransformingRDFConsumerTest extends TestCase {
 		URLTask task = new URLTaskImpl( url );
 		
 		Model data = consumer.getModel( task , response, "http://www.example.org");
-		assertNull( data );
+		assertTrue( data.isEmpty() );
 	}	
 	
 	/**
