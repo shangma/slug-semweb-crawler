@@ -31,14 +31,29 @@ public class TransformingRDFConsumer extends FilteringRDFConsumer {
 			return super.getContent(response);
 		}
 		
+		String result = tryToTransform(response, false);
+		if (result == null) {
+			result = tryToTransform(response, true);
+		}
+		return result;
+	}
+
+	/**
+	 * @param response
+	 * @return
+	 */
+	protected String tryToTransform(Response response, boolean tidy) {
 		StringWriter writer = new StringWriter();
 		
-		try {
+		try {			
+			//Transformer transformer = tidy ? TransformerFactory.newInstance().newTransformer() : templates.newTransformer();
 			Transformer transformer = templates.newTransformer();
 			
 			Result result = new StreamResult( writer );
 			
-			transformer.transform( getSource(response), result);
+			Source source = tidy ? getTidySource(response) : getSource(response);
+			
+			transformer.transform( source , result);
 			
 		} catch (TransformerException e) {
 			getLogger().log(Level.SEVERE, "Unable to perform transformation", e);
@@ -61,7 +76,14 @@ public class TransformingRDFConsumer extends FilteringRDFConsumer {
 		InputSource in = new InputSource( new StringReader( response.getContent().toString() ) );
 		return new SAXSource(reader, in);
 	}
-	
+
+	protected Source getTidySource(Response response) throws SAXException {
+		XMLReader reader = new org.cyberneko.html.parsers.SAXParser();
+		reader.setFeature("http://cyberneko.org/html/features/insert-namespaces", true);
+		reader.setProperty("http://cyberneko.org/html/properties/names/elems", "lower");
+		InputSource in = new InputSource( new StringReader( response.getContent().toString() ) );
+		return new SAXSource(reader, in);		
+	}
 	
 	@Override
 	protected boolean doConfig(Resource self) {
@@ -71,7 +93,7 @@ public class TransformingRDFConsumer extends FilteringRDFConsumer {
 
 		if (transformation != null) {
 			try {
-				TransformerFactory factory = TransformerFactory.newInstance();
+				TransformerFactory factory = TransformerFactory.newInstance();				
 				factory.setAttribute(net.sf.saxon.FeatureKeys.DTD_VALIDATION, Boolean.FALSE);
 				Source source = new StreamSource( transformation );
 				templates = factory.newTemplates(source);
