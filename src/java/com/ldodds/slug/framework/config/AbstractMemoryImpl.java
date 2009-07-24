@@ -81,27 +81,6 @@ public abstract class AbstractMemoryImpl implements Memory {
         }
 	}
 
-	public boolean canBeFetched(Resource rep, Date date) {
-        if (rep.hasProperty(SCUTTERVOCAB.latestFetch))
-        {
-            Resource latest = (Resource)rep.getProperty(SCUTTERVOCAB.latestFetch).getObject();
-            if (latest.hasProperty(DC.date))
-            {
-                Date last = DateUtils.getDate(latest.getProperty(DC.date).getObject().toString());
-                if (last == null || last.before( date ) )
-                {
-                    return true;                                                   
-                }
-            }
-        }
-        else
-        {
-            return true;                   
-        }
-        return false;
-
-	}
-
 	public ResIterator getAllRepresentations() {
 		    return _model.listSubjectsWithProperty(RDF.type, SCUTTERVOCAB.Representation);      
 	}
