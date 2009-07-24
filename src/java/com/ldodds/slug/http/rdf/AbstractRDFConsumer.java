@@ -41,6 +41,7 @@ public abstract class AbstractRDFConsumer extends ConsumerImpl {
 		Response response = (Response) result;
 
 		if ( ! canProcess(urlWorkItem, response) ) {
+			//FIXME mis-leading of canProcess decision not related to content type
 			getLogger().log(Level.FINE, "Cannot parse response of format: " + response.getContentType());
 			return;
 		}
