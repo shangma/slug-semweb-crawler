@@ -49,18 +49,6 @@ public abstract class MemoryImpl extends AbstractMemoryImpl
         }
     }
     
-    public boolean canBeFetched(Resource rep, Date date)
-    {
-        _model.enterCriticalSection(Lock.READ);
-        try
-        {
-        	return super.canBeFetched(rep, date);
-        } finally
-        {
-            _model.leaveCriticalSection();
-        }
-    }
-
     public void addRawTripleCount(Resource representation, long size)
     {
         _model.enterCriticalSection(Lock.WRITE);

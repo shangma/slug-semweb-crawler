@@ -38,7 +38,6 @@ public interface Memory
   Resource getRepresentation(URL url);
   Resource getOrCreateRepresentation(URL url);
   Resource getOrCreateRepresentation(URL url, URL origin);
-  boolean canBeFetched(Resource representation, Date date);
   void addRawTripleCount(Resource representation, long size);
   Resource makeFetch(Resource representation);
   void annotateFetch(Resource fetch, int code, Map<String, List<String>> headers);
