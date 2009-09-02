@@ -77,7 +77,7 @@ public class Scutter implements Runnable
      * @throws FileNotFoundException
      * @throws MalformedURLException
      */
-  private void setScutterPlan(String scutterplan) throws FileNotFoundException, MalformedURLException {
+  public void setScutterPlan(String scutterplan) throws FileNotFoundException, MalformedURLException {
 	logger.config("Scutter plan: " + scutterplan);
 	this.scutterPlan = scutterplan;	
   }
@@ -159,7 +159,7 @@ public class Scutter implements Runnable
     }
   }
   
-  private void setUserAgent(Resource me) {
+  public void setUserAgent(Resource me) {
 	  String userAgent = DEFAULT_USER_AGENT;
 	  if ( me.hasProperty(CONFIG.userAgent) ) {
 		  userAgent = me.getProperty(CONFIG.userAgent).getObject().toString();
@@ -221,19 +221,19 @@ public class Scutter implements Runnable
     memory.save();
   }
   
-  private void setConfig(String config) 
+  public void setConfig(String config) 
   {
 	logger.config("Using scutter config: " + config);
     configFile = config;
   }
   
-  private void setId(String id)
+  public void setId(String id)
   {
 	logger.config("Scutter config id: " + id);
     scutterId = id;
   }
   
-  private void setFreshen(boolean freshen)
+  public void setFreshen(boolean freshen)
   {
 	if (freshen) {
 		logger.config("Freshening urls in memory");
