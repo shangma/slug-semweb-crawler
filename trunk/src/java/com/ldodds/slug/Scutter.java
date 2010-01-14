@@ -112,7 +112,8 @@ public class Scutter implements Runnable
       
       //create the worker factory 
       URLRetrievalWorkerFactory factory = new URLRetrievalWorkerFactory();
-          
+      factory.setScutter(me);
+      
       //configure the shared memory
       factory.setMemoryFactory( memoryFactory );      
       

@@ -54,6 +54,10 @@ public class CONFIG {
     public static final Property storer = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/storer" );
     
     public static final Property userAgent = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/userAgent" );
+
+    public static final Property throttle = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/throttle" );
+
+    public static final Property timeout = m_model.createProperty( "http://purl.org/NET/schemas/slug/config/timeout" );
     
     public static final Resource MemoryHolder = m_model.createResource( "http://purl.org/NET/schemas/slug/config/MemoryHolder" );
     

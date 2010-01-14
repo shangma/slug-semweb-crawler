@@ -1,8 +1,10 @@
 package com.ldodds.slug.http;
 
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.ldodds.slug.framework.*;
 import com.ldodds.slug.framework.config.Memory;
 import com.ldodds.slug.framework.config.MemoryFactory;
+import com.ldodds.slug.http.throttle.AbstractThrottle;
 
 /**
  * @author ldodds
@@ -12,7 +14,8 @@ public class URLRetrievalWorkerFactory extends WorkerFactoryImpl
   
     private Consumer _consumer;
 	private MemoryFactory memoryFactory;
-	        
+	private Resource scutter;
+	
 	/**
 	 * @see com.ldodds.slug.framework.WorkerFactoryImpl#createWorker(java.lang.String)
 	 */
@@ -20,9 +23,9 @@ public class URLRetrievalWorkerFactory extends WorkerFactoryImpl
 	{
         URLRetrievalWorker worker = new URLRetrievalWorker( memoryFactory.getMemory() , name);
         worker.setConsumer(_consumer); 
+        worker.setThrottle( AbstractThrottle.getThrottle(scutter) );
         return worker;
 	}
-
 
     public void setConsumer(Consumer consumer)
     {
@@ -43,4 +46,7 @@ public class URLRetrievalWorkerFactory extends WorkerFactoryImpl
         }
     }
 
+    public void setScutter(Resource scutter) {
+       this.scutter = scutter;
+    }
 }
