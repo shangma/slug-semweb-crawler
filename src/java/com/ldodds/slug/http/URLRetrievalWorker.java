@@ -8,6 +8,7 @@ import com.hp.hpl.jena.rdf.model.*;
 
 import com.ldodds.slug.framework.*;
 import com.ldodds.slug.framework.config.Memory;
+import com.ldodds.slug.http.throttle.Throttle;
 import com.ldodds.slug.vocabulary.SCUTTERVOCAB;
 
 /**
@@ -17,7 +18,8 @@ public class URLRetrievalWorker extends ProducerWorkerImpl
 {
 	//used to get etags, lastModified, add skips and Reasons
 	private Memory _memory;
-
+	private Throttle throttle;
+	
 	public URLRetrievalWorker(Memory memory, String name)
 	{
 		super(name);
@@ -29,6 +31,7 @@ public class URLRetrievalWorker extends ProducerWorkerImpl
 	 */
 	protected Result doTask(Task workItem) {
 		URLTask urlTask = (URLTask)workItem;
+		pause(urlTask);		
 		Response response = null;
 		Resource fetch = null;
 		try {
@@ -45,7 +48,9 @@ public class URLRetrievalWorker extends ProducerWorkerImpl
 			try
 			{
 				_logger.finest("Connecting to " + workItem.getId() );
+				connecting(urlTask);
 				connection.connect();
+				connected(urlTask);
 				_memory.annotateFetch(fetch, connection.getResponseCode(), connection.getHeaderFields());
 
 			} catch (UnknownHostException uhe)
@@ -156,4 +161,19 @@ public class URLRetrievalWorker extends ProducerWorkerImpl
 		connection.addRequestProperty("Accept", "application/rdf+xml");
 	}
 
+	private void pause(URLTask task) {
+		if ( throttle != null )
+			throttle.pause(task);
+	}
+	private void connecting(URLTask task) {
+		if ( throttle != null )
+			throttle.connecting(task);	
+	}
+	private void connected(URLTask task) {
+		if ( throttle != null )
+			throttle.connected(task);		
+	}	
+	public void setThrottle(Throttle throttle) {
+		this.throttle = throttle;
+	}
 }
