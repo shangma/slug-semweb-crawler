@@ -7,6 +7,7 @@ import java.net.UnknownHostException;
 
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.ldodds.slug.framework.Result;
+import com.ldodds.slug.framework.ResultImpl;
 import com.ldodds.slug.framework.config.Memory;
 import com.ldodds.slug.vocabulary.SCUTTERVOCAB;
 
@@ -39,7 +40,7 @@ public class URLRetrievalWorkerTest extends TestCase {
 		replay(resource);
 		
 		Result result = worker.doTask( new URLTaskImpl(first, 1) );
-		assertNull(result);
+		assertEquals(true, result.isNoOp());
 		
 		verify(memory);
 		verify(resource);
@@ -137,6 +138,9 @@ public class URLRetrievalWorkerTest extends TestCase {
 		connection.connect();
 		expectLastCall().andThrow( e );
 		connection.setInstanceFollowRedirects(true);
+		connection.setReadTimeout(30000);
+		connection.setConnectTimeout(30000);
+		
 		connection.addRequestProperty("Accept", "application/rdf+xml");
 		
 		URLTask task = createMock(URLTask.class);
