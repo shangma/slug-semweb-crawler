@@ -1,0 +1,1 @@
+Slug implements the [ScutterVocab](http://rdfweb.org/topic/ScutterVocab) as a means of recording its travels across the Web.

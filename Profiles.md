@@ -1,0 +1,3 @@
+A profile is a Scutter configured to meet a particular purpose or exhibit certain behaviours, such as avoiding certain domains, storing and processing content according to particular rules, etc.
+
+The sample config file contains a number of profiles. E.g. a scutter that only crawls to a very limited depth, and another scutter that does not persistent any data, but simply harvests connections between documents.
